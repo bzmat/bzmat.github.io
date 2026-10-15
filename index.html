@@ -3,13 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio CLI</title>
+  <title>Portfolio CLI - Home</title>
   
   <!-- Collega il file CSS esterno -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Tutto il tuo codice HTML qui (header, main, nav, ecc.) -->
+  <!-- Effetto schermo CRT -->
+  <div class="scanlines"></div>
+  
+  <!-- Animazione di avvio del terminale -->
+  <div id="boot-sequence">
+    <p>Portfolio OS v1.0.0...</p>
+    <p>Loading kernel... OK</p>
+    <p>Mounting file systems... OK</p>
+    <p>Access Granted.</p>
+  </div>
+
+  <!-- Contenuto della pagina (nascosto finché il boot non finisce tramite JS) -->
+  <main id="main-content" style="display:none;">
+    <div class="prompt">guest@portfolio:~$ <span class="command">ls -l</span></div>
+    <p class="comment">// Usa le frecce ↑ ↓ per navigare, INVIO per selezionare.</p>
+    
+    <ul id="nav-list">
+      <li>
+        <!-- Link alla pagina About Me -->
+        <a href="about.html" class="nav-item focus-target">
+          <span class="perms">-rw-r--r--</span>
+          <span class="size">1024</span>
+          <span class="date">Oct 15 10:00</span>
+          <span class="name">about.txt</span>
+        </a>
+      </li>
+      <li>
+        <!-- Link alla pagina Sapienza Projects -->
+        <a href="sapienza.html" class="nav-item">
+          <span class="perms">drwxr-xr-x</span>
+          <span class="size">4096</span>
+          <span class="date">Oct 15 10:05</span>
+          <span class="name">sapienza_projects/</span>
+        </a>
+      </li>
+    </ul>
+    
+    <!-- Cursore finale lampeggiante -->
+    <div class="prompt">guest@portfolio:~$ <span class="cursor">█</span></div>
+  </main>
   
   <!-- Collega il file JavaScript esterno -->
   <script src="script.js"></script>
