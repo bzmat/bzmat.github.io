@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework 1 - Public-Key Cryptography</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    /* Stili specifici per il canvas del grafico */
+    #ecc-canvas {
+      border: 1px dashed #00FF41;
+      background-color: rgba(0, 255, 65, 0.05);
+      margin: 15px 0;
+      image-rendering: pixelated;
+    }
+    .highlight { color: #ffffff; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  
+  <main id="main-content">
+    
+    <!-- SEZIONE 1: DESCRIZIONE DELL'HOMEWORK -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat assignment.txt</span></div>
+    
+    <div class="text-content">
+      <p><strong>HMWK 1: Public-Key Cryptography in Ethereum (ECC)</strong></p>
+      <p>L'obiettivo è dimostrare il funzionamento della <em>Elliptic-Curve Scalar Multiplication</em> come funzione crittografica unidirezionale. Invece della complessa secp256k1 usata da Ethereum, utilizzeremo una curva giocattolo (toy curve) per scopi didattici.</p>
+      <br>
+      <ul style="list-style-type: none;">
+        <li>> Curva: y² = x³ + 7 (mod 17)</li>
+        <li>> Base Point (G): (1, 5)</li>
+        <li>> Private Key (k): 6</li>
+      </ul>
+    </div>
+
+    <!-- SEZIONE 2: ESECUZIONE SCRIPT E GRAFICO -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">node ecdlp_simulator.js --visualize</span></div>
+    
+    <div class="text-content">
+      <p class="comment">// Inizializzazione calcolo moltiplicazione scalare...</p>
+      
+      <!-- Qui il JS inserirà l'output testuale dei calcoli -->
+      <pre id="cli-output">Calcolando i punti per k = 6...\n</pre>
+      
+      <p class="comment">// Generazione rappresentazione visiva della curva (Mod 17)...</p>
+      <!-- Canvas per il grafico -->
+      <canvas id="ecc-canvas" width="400" height="400"></canvas>
+    </div>
+
+    <!-- SEZIONE 3: ESPLORAZIONE STATISTICA -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat statistical_exploration.md</span></div>
+    
+    <div class="text-content">
+      <p><strong>== STATISTICAL EXPLORATION ==</strong></p>
+      <p>Ripetendo l'esperimento con valori diversi di $k$, emergono proprietà statistiche chiave che differenziano le curve ellittiche (ECDLP) dalle classiche funzioni di hash crittografico (es. SHA-256):</p>
+      <br>
+      <ul>
+        <li><strong>Distribuzione Uniforme e Frequenza:</strong> Su curve reali (es. secp256k1), le coordinate (x, y) generate da chiavi private casuali risultano uniformemente distribuite in tutto il campo finito. Nessun punto "valido" è statisticamente più probabile di un altro, prevenendo attacchi basati su pattern.</li>
+        <li><strong>Correlazione Input-Output:</strong> Nella ECC, la moltiplicazione scalare (Q = kG) mappa linearmente $k$ a $Q$ attraverso somme algebriche. Nonostante la formula sia predeterminata, trovare $k$ a partire da $Q$ nel campo discreto richiede forza bruta (problema del logaritmo discreto), rendendo la correlazione non invertibile in tempi utili.</li>
+        <li><strong>Effetto Valanga (Avalanche Effect):</strong> Questo è il tratto distintivo. Le funzioni Hash (come SHA) sono progettate per un effetto valanga puro: cambiare 1 bit dell'input altera ~50% dei bit dell'output. La ECC <em>non</em> nasce con questo vincolo statistico sui bit: cambiando $k$ in $k+1$, il punto risultante cambia in modo prevedibile (Q + G), sebbene le coordinate appaiano scorrelate a livello visivo a causa del modulo primo.</li>
+        <li><strong>Conclusione:</strong> La moltiplicazione scalare della curva ellittica è una <em>Trapdoor One-Way Function</em> (unidirezionale con "scorciatoia" matematica se si ha la chiave), mentre un Hash è una funzione di compressione unidirezionale priva di chiavi e scorciatoie algebriche.</li>
+      </ul>
+    </div>
+
+    <!-- MENU DI USCITA -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cd ..</span></div>
+    <ul id="nav-list">
+      <li>
+        <a href="index.html" class="nav-item focus-target">
+          <span class="name">[ cd .. ] Torna alla lista Homework</span>
+        </a>
+      </li>
+    </ul>
+    
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="cursor">█</span></div>
+  </main>
+
+  <script src="../script.js"></script>
+  
+  <!-- SCRIPT SPECIFICO PER L'HOMEWORK (Logica ECC e Canvas) -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const p = 17; // Modulo
+      const a = 0;  // Parametro a (x^3 + ax + b)
+      let G = { x: 1, y: 5 }; // Base point
+      const k = 6;  // Private key
+      
+      const output = document.getElementById("cli-output");
+      const canvas = document.getElementById("ecc-canvas");
+      const ctx = canvas.getContext("2d");
+      
+      // Funzione per modulo matematico corretto anche per numeri negativi
+      function mod(n, m) { return ((n % m) + m) % m; }
+
+      // Inverso moltiplicativo modulare usando forza bruta (poiché p=17 è piccolo)
+      function modInverse(n, m) {
+        n = mod(n, m);
+        for (let i = 1; i < m; i++) {
+          if (mod(n * i, m) === 1) return i;
+        }
+        return 1;
+      }
+
+      // Addizione di punti su Curva Ellittica
+      function addPoints(P, Q) {
+        if (!P) return Q;
+        if (!Q) return P;
+        
+        let lambda;
+        if (P.x === Q.x && P.y === Q.y) {
+          if (P.y === 0) return null; // Punto all'infinito
+          lambda = mod((3 * Math.pow(P.x, 2) + a) * modInverse(2 * P.y, p), p);
+        } else {
+          if (P.x === Q.x) return null; // Punto all'infinito
+          lambda = mod((Q.y - P.y) * modInverse(Q.x - P.x, p), p);
+        }
+        
+        const x3 = mod(lambda * lambda - P.x - Q.x, p);
+        const y3 = mod(lambda * (P.x - x3) - P.y, p);
+        return { x: x3, y: y3 };
+      }
+
+      // Esecuzione calcoli
+      let currentPoint = G;
+      const points = [G];
+      let logText = `1G = (${G.x}, ${G.y})  <-- BASE POINT\n`;
+      
+      for (let i = 2; i <= k; i++) {
+        currentPoint = addPoints(currentPoint, G);
+        points.push(currentPoint);
+        if (i === k) {
+          logText += `<span class="highlight">${i}G = (${currentPoint.x}, ${currentPoint.y})  <-- TOY PUBLIC KEY (Q)</span>\n`;
+        } else {
+          logText += `${i}G = (${currentPoint.x}, ${currentPoint.y})\n`;
+        }
+      }
+      
+      output.innerHTML += logText;
+
+      // Disegno Grafico su Canvas
+      const gridSize = 17;
+      const cellSize = canvas.width / gridSize;
+      
+      // 1. Disegna la griglia
+      ctx.strokeStyle = "rgba(0, 255, 65, 0.2)";
+      for(let i = 0; i <= gridSize; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * cellSize, 0);
+        ctx.lineTo(i * cellSize, canvas.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i * cellSize);
+        ctx.lineTo(canvas.width, i * cellSize);
+        ctx.stroke();
+      }
+
+      // 2. Plotting dei punti calcolati con animazione/numerazione
+      ctx.fillStyle = "#00FF41";
+      ctx.font = "14px Courier New";
+      
+      points.forEach((pt, index) => {
+        if (!pt) return;
+        // Invertiamo l'asse Y per far combaciare i grafici matematici classici (0 in basso)
+        const px = pt.x * cellSize + (cellSize / 2);
+        const py = canvas.height - (pt.y * cellSize + (cellSize / 2));
+        
+        // Punto
+        ctx.beginPath();
+        ctx.arc(px, py, 5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Testo del punto (es. 1G)
+        ctx.fillText(`${index + 1}G`, px + 8, py - 8);
+      });
+    });
+  </script>
+</body>
+</html>
