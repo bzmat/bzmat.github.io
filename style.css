@@ -1,133 +1,180 @@
 /* =========================================
-   RESET E IMPOSTAZIONI GLOBALI
-   ========================================= */
+           RESET E IMPOSTAZIONI GLOBALI
+           ========================================= */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
 }
 
 body {
-    background-color: #000000;
-    color: #00FF41; /* Verde Neon stile Matrix/CRT */
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 16px;
-    line-height: 1.6;
-    padding: 20px;
-    /* Effetto bagliore (glow) per simulare i fosfori dei vecchi monitor */
-    text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
-    overflow-x: hidden;
+   background-color: #000000;
+   color: #00FF41;
+   font-family: 'Courier New', Courier, monospace;
+   font-size: 16px;
+   line-height: 1.6;
+   padding: 20px;
+   text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
+   overflow-x: hidden;
+   /* Prevent scrolling when using arrow keys */
+   overscroll-behavior: none; 
 }
 
 /* =========================================
-   EFFETTO RETRÒ: SCANLINES
-   ========================================= */
-/* Crea le linee di scansione orizzontali tipiche dei monitor CRT */
+  EFFETTO RETRÒ: SCANLINES E GLOW
+  ========================================= */
 body::before {
-    content: " ";
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    z-index: 2;
-    background-size: 100% 4px, 3px 100%;
-    pointer-events: none;
+   content: " ";
+   display: block;
+   position: fixed;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 0;
+   background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+   z-index: 10;
+   background-size: 100% 4px, 3px 100%;
+   pointer-events: none; /* Let clicks pass through */
 }
 
 /* =========================================
-   PROMPT DEI COMANDI
-   ========================================= */
+  PROMPT DEI COMANDI E TESTI
+  ========================================= */
 .prompt-line {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+   margin-bottom: 15px;
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
 }
 
-.user {
-    color: #00FF41;
-    font-weight: bold;
-}
-
-.host {
-    color: #00FF41;
-    font-weight: bold;
-}
-
-.path {
-    color: #00FF41;
-}
-
-.symbol {
-    margin-right: 8px;
-    color: #00FF41;
-}
+.user { color: #00FF41; font-weight: bold; }
+.host { color: #00FF41; font-weight: bold; }
+.path { color: #3498db; font-weight: bold; } /* Changed path color for slight contrast */
+.symbol { margin-right: 8px; color: #00FF41; }
 
 .command {
-    color: #ffffff; /* Il comando digitato spicca in bianco */
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+   color: #ffffff;
+   text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+}
+
+.comment {
+   color: #888888; /* Gray for comments */
+   margin-bottom: 15px;
+   font-style: italic;
+   text-shadow: none;
 }
 
 /* =========================================
-   LINK E INTERATTIVITÀ
-   ========================================= */
+  LINK E NAVIGAZIONE
+  ========================================= */
+.nav-list {
+   display: flex;
+   flex-direction: column;
+   gap: 5px;
+   margin-bottom: 20px;
+   padding-left: 10px;
+}
+
+.nav-item {
+   display: flex;
+   align-items: center;
+}
+
+.file-meta {
+   color: #888;
+   margin-right: 15px;
+   white-space: pre;
+   display: inline-block;
+}
+
 a {
-    color: #00FF41;
-    text-decoration: none;
-    padding: 0 2px;
-    transition: all 0.1s ease;
-    position: relative;
-    z-index: 3; /* Assicura che i link siano cliccabili sopra le scanlines */
+   color: #00FF41;
+   text-decoration: none;
+   padding: 2px 8px;
+   position: relative;
+   z-index: 3;
+   display: inline-block;
+   cursor: pointer;
 }
 
-a::before {
-    content: "[ ";
-    opacity: 0.5;
+a::before { content: "[ "; opacity: 0.5; }
+a::after { content: " ]"; opacity: 0.5; }
+
+/* Stati attivi/hover unificati */
+a:hover, a.active {
+   background-color: #00FF41;
+   color: #000000;
+   text-shadow: none;
+   outline: none;
 }
 
-a::after {
-    content: " ]";
-    opacity: 0.5;
+a:hover::before, a:hover::after,
+a.active::before, a.active::after {
+   opacity: 1;
+   color: #000000;
 }
 
-/* Effetto hover: inverte i colori come nei vecchi terminali */
-a:hover {
-    background-color: #00FF41;
-    color: #000000;
-    text-shadow: none;
+/* Animazione lampeggiante iniziale */
+@keyframes blink-active {
+   0%, 49% {
+       background-color: #00FF41;
+       color: #000000;
+       text-shadow: none;
+   }
+   50%, 100% {
+       background-color: transparent;
+       color: #00FF41;
+       text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
+   }
 }
 
-a:hover::before, a:hover::after {
-    opacity: 1;
-    color: #000000;
+a.blinking-active {
+   animation: blink-active 1s step-start infinite;
+}
+
+a.blinking-active::before, a.blinking-active::after {
+   opacity: 1;
 }
 
 /* =========================================
-   CURSORE LAMPEGGIANTE
-   ========================================= */
+  CURSORE E VIEWS
+  ========================================= */
 .cursor {
-    display: inline-block;
-    width: 10px;
-    height: 1.2em;
-    background-color: #00FF41;
-    vertical-align: middle;
-    margin-left: 2px;
-    animation: blink 1s step-end infinite;
-    box-shadow: 0 0 5px rgba(0, 255, 65, 0.8);
+   display: inline-block;
+   width: 10px;
+   height: 1.2em;
+   background-color: #00FF41;
+   vertical-align: middle;
+   margin-left: 5px;
+   animation: blink-cursor 1s step-end infinite;
+   box-shadow: 0 0 5px rgba(0, 255, 65, 0.8);
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+@keyframes blink-cursor {
+   0%, 100% { opacity: 1; }
+   50% { opacity: 0; }
 }
 
-/* =========================================
-   UTILITY CLASSES
-   ========================================= */
-.output {
-    margin-bottom: 20px;
-    padding-left: 10px;
+.view {
+   display: none; /* Nascondi tutte le view di default */
+   animation: fadeIn 0.2s ease-in;
+}
+
+.view.active-view {
+   display: block; /* Mostra solo la view attiva */
+}
+
+@keyframes fadeIn {
+   from { opacity: 0; transform: translateY(5px); }
+   to { opacity: 1; transform: translateY(0); }
+}
+
+.content-block {
+   padding-left: 10px;
+   margin-bottom: 20px;
+   max-width: 800px;
+}
+
+.content-block p {
+   margin-bottom: 10px;
 }
