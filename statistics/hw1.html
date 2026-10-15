@@ -12,35 +12,28 @@
   <div class="scanlines"></div>
   
   <main id="main-content">
-    
-    <!-- SEZIONE 1: RICERCA TEORICA -->
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat intro.txt</span></div>
-    
-    <div class="text-content">
-      <p>Questo progetto esplora i fondamenti della pulizia dei dati e del preprocessing.</p>
-      <br>
-      <p>L'obiettivo principale è stato identificare i valori anomali in un dataset di misurazioni fisiche e preparare la struttura dati per un successivo modello di regressione lineare. Sono state applicate tecniche di normalizzazione Z-score per uniformare la scala delle variabili.</p>
-    </div>
 
-    <!-- SEZIONE 2: APPLICAZIONE ALGORITMO -->
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat preprocessing.r</span></div>
-    
-    <pre><code># Importazione dataset
-dataset <- read.csv("dati_grezzi.csv")
-
-# Rimozione valori nulli
-dataset_pulito <- na.omit(dataset)
-
-# Calcolo dello Z-score per la colonna 'pressione'
-dataset_pulito$pressione_z <- scale(dataset_pulito$pressione)
-
-# Filtraggio outlier (|Z| > 3)
-dataset_finale <- subset(dataset_pulito, abs(pressione_z) <= 3)
-
-print("Preprocessing completato con successo.")</code></pre>
+    <section class="text-content">
+  <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat abstract.txt</span></div>
+  
+  <p><strong>Elliptic Curve Cryptography: Toy Model of Public-Key Derivation</strong></p>
+  <br>
+  <p>
+    This project demonstrates how asymmetric public-key cryptography operates using Elliptic-Curve Scalar Multiplication, the foundational mechanism behind Ethereum's <code>secp256k1</code> standard.
+  </p>
+  <br>
+  <p>
+    Using a simplified model over a finite field—the curve <em>y² ≡ x³ + 7 (mod 17)</em> with generator point <em>G = (1, 5)</em>—the system derives a public key <em>Q = kG</em> for a private scalar <em>k = 6</em> via iterative point addition and modular arithmetic.
+  </p>
+  <br>
+  <p>
+    Beyond the forward computation, the project explores the statistical behavior of the resulting coordinates, contrasting the algebraic structure of the Elliptic Curve Discrete Logarithm Problem (ECDLP) as a trapdoor one-way function with the pseudo-random avalanche dynamics typical of cryptographic hash algorithms.
+  </p>
+</section>
+   
 
     <!-- SEZIONE 3: APERTURA PDF (Opzione 1) -->
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">xdg-open report_finale.pdf</span></div>
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">open hw1_solution.html</span></div>
     
     <div class="text-content">
       <p class="comment">// Avvio del visualizzatore grafico esterno in corso...</p>
