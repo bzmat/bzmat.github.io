@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework 2 - Wallet Seed to Ethereum Address</title>
+  
+  <!-- Links to the shared style.css located in the parent directory -->
+  <link rel="stylesheet" href="../style.css">
+  
+</head>
+<body>
+
+  <div class="container">
+    <h1>Homework 2</h1>
+    <p><strong>From Wallet Seed to Ethereum Address: Hashing, Key Derivation, and Cryptographic Primitives</strong></p>
+
+    <!-- SECTION 1: WALLET PIPELINE -->
+    <h2>1. The Wallet Derivation Pipeline</h2>
+    <p>
+      An Ethereum wallet doesn't just create an address out of thin air. It relies on a deterministic, standard-based sequence to transform human-readable words into a secure, verifiable address. This ensures that any wallet software (such as MetaMask, Rabby, or Exodus) using the same "seed" will reproduce the exact same suite of keys and addresses.
+    </p>
+
+    <div class="pipeline-diagram">
+Mnemonic (12-24 Words)
+      ↓ <span style="color:#ffffff;">BIP-39</span> (PBKDF2 with HMAC-SHA512)
+Root Seed (512-bit)
+      ↓ <span style="color:#ffffff;">B
