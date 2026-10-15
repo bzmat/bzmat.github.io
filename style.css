@@ -67,7 +67,11 @@ body::before {
 /* =========================================
   LINK E NAVIGAZIONE
   ========================================= */
-.nav-list {
+/* =========================================
+   LINK E NAVIGAZIONE (CORRETTO)
+   ========================================= */
+ul#nav-list {
+   list-style: none; /* Rimuove i pallini della lista */
    display: flex;
    flex-direction: column;
    gap: 5px;
@@ -76,64 +80,47 @@ body::before {
 }
 
 .nav-item {
-   display: flex;
+   display: flex; /* Allinea gli span interni sulla stessa riga */
    align-items: center;
-}
-
-.file-meta {
-   color: #888;
-   margin-right: 15px;
-   white-space: pre;
-   display: inline-block;
-}
-
-a {
    color: #00FF41;
    text-decoration: none;
-   padding: 2px 8px;
+   padding: 4px 8px;
    position: relative;
-   z-index: 3;
-   display: inline-block;
    cursor: pointer;
+   width: fit-content; /* Lo sfondo verde avvolgerà solo il testo, non tutta la riga */
+   z-index: 3;
 }
 
-a::before { content: "[ "; opacity: 0.5; }
-a::after { content: " ]"; opacity: 0.5; }
+/* Distanzia gli elementi interni (permessi, data, nome) */
+.nav-item span {
+   margin-right: 15px;
+}
 
-/* Stati attivi/hover unificati */
-a:hover, a.active {
-   background-color: #00FF41;
-   color: #000000;
-   text-shadow: none;
+/* Parentesi quadre iniziali e finali */
+.nav-item::before { content: "[ "; opacity: 0.5; margin-right: 8px; }
+.nav-item::after { content: " ]"; opacity: 0.5; margin-left: 8px; }
+
+/* STATO HOVER (Mouse) E FOCUS (Frecce Tastiera) */
+.nav-item:hover, 
+.nav-item.focus-target {
+   background-color: #00FF41 !important;
+   color: #000000 !important;
+   text-shadow: none !important;
    outline: none;
 }
 
-a:hover::before, a:hover::after,
-a.active::before, a.active::after {
-   opacity: 1;
-   color: #000000;
+/* Forza gli elementi INTERNI a diventare neri durante l'hover */
+.nav-item:hover *, 
+.nav-item.focus-target * {
+   color: #000000 !important;
+   text-shadow: none !important;
 }
 
-/* Animazione lampeggiante iniziale */
-@keyframes blink-active {
-   0%, 49% {
-       background-color: #00FF41;
-       color: #000000;
-       text-shadow: none;
-   }
-   50%, 100% {
-       background-color: transparent;
-       color: #00FF41;
-       text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
-   }
-}
-
-a.blinking-active {
-   animation: blink-active 1s step-start infinite;
-}
-
-a.blinking-active::before, a.blinking-active::after {
-   opacity: 1;
+/* Rende le parentesi quadre nere e 100% visibili durante l'hover */
+.nav-item:hover::before, .nav-item:hover::after,
+.nav-item.focus-target::before, .nav-item.focus-target::after {
+   opacity: 1 !important;
+   color: #000000 !important;
 }
 
 /* =========================================
