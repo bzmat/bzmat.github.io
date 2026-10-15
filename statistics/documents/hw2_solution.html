@@ -8,6 +8,129 @@
   <!-- Links to the shared style.css located in the parent directory -->
   <link rel="stylesheet" href="../style.css">
   
+  <style>
+    /* In case extra specific layout refinements are needed on top of style.css */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background-color: #121212;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: #ffffff;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-bottom: 25px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 12px;
+    }
+
+    /* Style for highlighted visual structures */
+    .highlight {
+      font-weight: bold;
+      color: #ff9800; /* Orange highlight color */
+    }
+
+    pre {
+      background-color: #2d2d2d;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      line-height: 1.4;
+    }
+
+    .pipeline-diagram {
+      text-align: center;
+      font-family: 'Courier New', Courier, monospace;
+      color: #ff9800;
+      background-color: rgba(255, 152, 0, 0.05);
+      border: 1px dashed #ff9800;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 25px 0;
+    }
+
+    .timeline {
+      border-left: 2px solid #ff9800;
+      padding-left: 20px;
+      margin: 30px 0;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -27px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ff9800;
+    }
+
+    .timeline-year {
+      font-weight: bold;
+      color: #ff9800;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #ff9800;
+      color: #121212;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .back-link:hover {
+      background-color: #e68a00;
+    }
+  </style>
 </head>
 <body>
 
@@ -25,4 +148,94 @@
 Mnemonic (12-24 Words)
       ↓ <span style="color:#ffffff;">BIP-39</span> (PBKDF2 with HMAC-SHA512)
 Root Seed (512-bit)
-      ↓ <span style="color:#ffffff;">B
+      ↓ <span style="color:#ffffff;">BIP-32 / BIP-44</span> (HMAC-SHA512 + Derivation Paths)
+Extended Private Key (m/44'/60'/0'/0/0)
+      ↓ <span style="color:#ffffff;">Elliptic Curve Math</span> (k → k·G on secp256k1)
+Public Key (64-byte, uncompressed)
+      ↓ <span style="color:#ffffff;">Keccak-256</span> (Strictly last 20 bytes)
+Ethereum Address (Raw 20-byte)
+      ↓ <span style="color:#ffffff;">EIP-55</span> (Capitalization-based Checksum)
+Checksummed Address (0x...)
+    </div>
+
+    <!-- SECTION 2: STANDARDS AND PRIMITIVES -->
+    <h2>2. Key Primitives and Standards</h2>
+    <p>Let's dissect what each standard and mathematical element actually does in the chain:</p>
+    
+    <ul>
+      <li><strong class="highlight">BIP-39 (Mnemonic & Seed Generation):</strong> Turns 128 to 256 bits of entropy into 12 to 24 simple words chosen from a list. It generates a 512-bit seed using <code>PBKDF2</code> (stretching the words 2048 times with HMAC-SHA512) and a salt (optionally with a passphrase). This makes backup and physical storage humanly manageable.</li>
+      
+      <li><strong class="highlight">BIP-32 (Hierarchical Deterministic / HD Wallets):</strong> Defines how to generate a tree-like hierarchy of keys from a single seed. If you lose one address but have the parent, you can re-derive the whole tree. It introduces a "chain code" to prevent someone who finds one child key from finding the others.</li>
+      
+      <li><strong class="highlight">BIP-44 (Multi-Account Standard):</strong> Establishes a rigid, multi-purpose derivation path structure: <code>m / purpose' / coin_type' / account' / change / address_index</code>. Ethereum wallets use <code>m/44'/60'/0'/0/i</code>. This forces multi-coin compatibility, meaning MetaMask, Exodus, and ledger devices can all inspect the same HD structural hierarchy without collision.</li>
+      
+      <li><strong class="highlight">secp256k1 (Asymmetric Cryptography):</strong> This specific elliptic curve defines the mathematical bounds of your address. While we used y² = x³ + 7 over Mod 17 in HMWK 1, secp256k1 uses the same formula but over a giant 256-bit prime modulus. It securely derives the public key from the private key via $Q = kG$. This guarantees that finding $k$ from $Q$ is practically impossible.</li>
+      
+      <li><strong class="highlight">Keccak-256 (Hashing):</strong> An iterative hash function that takes the uncompressed 64-byte public key (excluding the <code>0x04</code> prefix) and digests it down to 32 bytes. The final Ethereum Address uses strictly the last 20 bytes of this hash, which prevents your public key from being openly shown until you sign a transaction, while shrinking it for easier display.</li>
+      
+      <li><strong class="highlight">EIP-55 (Mixed-Case Checksum):</strong> Replaces the old lowercase format with capitalization-based validation (e.g., 0xfb691... to 0xFB691...). It does this by hashing the lowercase address with Keccak-256 and changing each letter to uppercase if the corresponding hash bit is 1. If you mistype a single character, MetaMask detects it without increasing the address length.</li>
+    </ul>
+
+    <!-- SECTION 3: CLASSIFYING TECHNOLOGY -->
+    <h2>3. Distinguishing Cryptographic Operations</h2>
+    <p>To prevent security exploits, developers and statisticians must distinguish these non-interchangeable roles:</p>
+    
+    <ol>
+      <li><strong class="highlight">Key Generation vs. Key Derivation:</strong> <span class="highlight">Key Generation</span> creates a high-entropy starting variable completely from scratch (like drawing a random private seed). <span class="highlight">Key Derivation</span> mathematically calculates new keys from already existing parent data. BIP-32 and BIP-44 are algorithms that calculate Child Keys without needing any new randomness.</li>
+      <li><strong class="highlight">Public-Key Cryptography (secp256k1):</strong> Dual-key mathematical setups where the public part is used for identity and verification, while the private part signs messages. Reversing this ($Q \rightarrow k$) requires brute force, which makes it an ideal choice for identity verification.</li>
+      <li><strong class="highlight">Hashing (Keccak-256):</strong> A strictly one-way function that compresses an input of any size into a fixed 256-bit output. It is deterministic, is fast to verify, and does not have a key. This lets you inspect data integrity without exposing the original message.</li>
+      <li><strong class="highlight">Checksums (EIP-55):</strong> A small piece of diagnostic data added to an address to verify it was written correctly. It helps catch user input errors rather than preventing hacking.</li>
+      <li><strong class="highlight">Encoding:</strong> Transforming data patterns without changing them mathematically (like how BIP-39 maps numbers to words or Base58 maps hash bytes to alphanumeric text). Encoding can be easily reversed and does not require a password.</li>
+    </ol>
+
+    <!-- SECTION 4: TEMPORAL AND HISTORICAL CONTEXT -->
+    <h2>4. Temporal and Historical Context</h2>
+    <p>
+      The cryptographic tools we take for granted in a wallet today were developed over nearly four decades of academic research. They show a clear shift from general privacy needs to the requirements of key storage and Web3 interfaces:
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-year">1977</span> — <strong>RSA:</strong> The original foundation of asymmetric encryption and digital signing. It uses huge prime numbers, whereas modern blockchains use Elliptic Curves because they require far less processing power and much smaller keys.
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2001</span> — <strong>SHA-2 / SHA-512:</strong> Developed by the NSA as a standard for data security, and later used by BIP-39 for stretching seed phrases.
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2012</span> — <strong>BIP-32:</strong> Proposed hierarchical deterministic wallet structures, moving the industry away from managing millions of individual, disorganized loose private keys.
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2013</span> — <strong>BIP-39:</strong> Made wallet setups far less stressful by creating standard, human-readable 12-to-24-word backup seeds.
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2014</span> — <strong>BIP-44:</strong> Put a logical structure on multi-currency HD derivation paths, which allowed a single backup phrase to cover multiple blockchains.
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2015</span> — <strong>SHA-3 & Keccak:</strong> The Keccak team won the NIST contest for the SHA-3 hashing standard. Early Ethereum chose Keccak-256 before the standards were final, meaning Ethereum's version has slightly different padding and domain separation than standard SHA-3.
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2016</span> — <strong>EIP-55:</strong> Mixed-case validation was added to prevent typos and loss of funds, while remaining compatible with existing lowercase-only systems.
+      </div>
+    </div>
+
+    <!-- SECTION 5: STATISTICAL DISCUSSIONS -->
+    <h2>5. Statistical Implications & Properties</h2>
+    <p>
+      Using a single, "all-in-one" algorithm for wallets wouldn't work. Blockchains require different mathematical qualities for different tasks:
+    </p>
+    <ul>
+      <li><strong>Statistical Uniformity (Keccak-256):</strong> Essential for addresses. If there were patterns in the hashes, attackers could try to predict which addresses are easier to compromise. Hash functions ensure every address index on Ethereum has an equal probability of being generated, spreading them randomly through the available space to avoid "collisions."</li>
+      
+      <li><strong>Avalanche Effect vs. Path Relation (Hash vs HD Keys):</strong> Keccak-256 uses the <em>Avalanche Effect</em>, where changing just one letter of a password completely randomizes the output. However, BIP-32 HD paths are designed for the exact opposite: they require a predictable parent-to-child relationship, even though each child looks distinct, so that parent addresses can reliably identify and find all child assets.</li>
+      
+      <li><strong>Efficiency vs. Entropy (BIP-39):</strong> Stretching a seed phrase 2048 times with <code>PBKDF2</code> slows down brute-force attacks by requiring computer hardware to verify every guess, without requiring users to memorize long strings of random numbers.</li>
+    </ul>
+
+    <!-- Back to Homework List Link -->
+    <a href="index.html" class="back-link">&larr; Back to Homework list</a>
+  </div>
+
+  <!-- Included script.js allows for shared navigation, fade-in loading, and focus states -->
+  <script src="../script.js"></script>
+</body>
+</html>
