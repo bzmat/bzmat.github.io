@@ -178,3 +178,11 @@ a.blinking-active::before, a.blinking-active::after {
 .content-block p {
    margin-bottom: 10px;
 }
+
+/* Effetto hover con il mouse OPPURE quando selezionato con la tastiera */
+.nav-item:hover, 
+.nav-item.focus-target {
+  background-color: var(--neon-green);
+  color: var(--bg-color);
+  outline: none;
+}
