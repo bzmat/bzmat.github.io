@@ -180,9 +180,17 @@ a.blinking-active::before, a.blinking-active::after {
 }
 
 /* Effetto hover con il mouse OPPURE quando selezionato con la tastiera */
+/* Effetto hover con il mouse OPPURE quando selezionato con la tastiera */
 .nav-item:hover, 
 .nav-item.focus-target {
-  background-color: var(--neon-green);
-  color: var(--bg-color);
-  outline: none;
+   background-color: #00FF41;
+   color: #000000;
+   outline: none;
+}
+
+/* Assicura che anche gli pseudoelementi [ e ] cambino colore con la tastiera */
+.nav-item.focus-target::before,
+.nav-item.focus-target::after {
+   opacity: 1;
+   color: #000000;
 }
