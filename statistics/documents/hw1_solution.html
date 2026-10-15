@@ -146,6 +146,8 @@
 
   <!-- SCRIPT SPECIFIC TO THE HOMEWORK (ECC Logic and Canvas) -->
   <script>
+    <!-- SCRIPT SPECIFIC TO THE HOMEWORK (ECC Logic and Canvas) -->
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
       const p = 17; // Modulo
       const a = 0;  // Parameter a (x^3 + ax + b)
@@ -156,10 +158,10 @@
       const canvas = document.getElementById("ecc-canvas");
       const ctx = canvas.getContext("2d");
       
-      // Function for correct mathematical modulo (handles negative numbers)
+      // Function for correct mathematical modulo
       function mod(n, m) { return ((n % m) + m) % m; }
 
-      // Modular multiplicative inverse using brute force (since p=17 is small)
+      // Modular multiplicative inverse
       function modInverse(n, m) {
         n = mod(n, m);
         for (let i = 1; i < m; i++) {
@@ -204,44 +206,89 @@
       
       output.innerHTML += logText;
 
-      // Draw Chart on Canvas
+      // --- ADVANCED CANVAS DRAWING ---
       const gridSize = 17;
-      const cellSize = canvas.width / gridSize;
+      const padding = 25; // Spazio per i numeri degli assi
+      const usableWidth = canvas.width - padding * 2;
+      const usableHeight = canvas.height - padding * 2;
+      const cellSize = usableWidth / gridSize;
       
-      // 1. Draw background grid (dark gray)
-      ctx.strokeStyle = "#333333";
+      // Sfondo pulito
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Disegna la griglia e i numeri degli assi
+      ctx.lineWidth = 1;
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
       for(let i = 0; i <= gridSize; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * cellSize, 0);
-        ctx.lineTo(i * cellSize, canvas.height);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(0, i * cellSize);
-        ctx.lineTo(canvas.width, i * cellSize);
-        ctx.stroke();
+        const x = padding + i * cellSize;
+        const y = canvas.height - padding - i * cellSize;
+
+        // Linee griglia verticali e orizzontali
+        ctx.strokeStyle = "#333333";
+        ctx.beginPath(); ctx.moveTo(x, padding); ctx.lineTo(x, canvas.height - padding); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(padding, y); ctx.lineTo(canvas.width - padding, y); ctx.stroke();
+
+        // Numeri Asse X (in basso) e Asse Y (a sinistra)
+        ctx.fillStyle = "#888888";
+        if (i < gridSize) {
+          ctx.fillText(i, x + cellSize / 2, canvas.height - padding / 2 + 5);
+          ctx.fillText(i, padding / 2 - 2, y - cellSize / 2);
+        }
       }
 
-      // 2. Plot the calculated points with animation/numbering
-      ctx.fillStyle = "#ff9800"; // Orange for the points
-      ctx.font = "bold 14px sans-serif";
+      // 2. Disegna le linee di connessione (I salti da 1G a 6G)
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(255, 152, 0, 0.4)"; // Arancione semitrasparente
+      ctx.setLineDash([5, 5]); // Linea tratteggiata
+      ctx.lineWidth = 2;
       
       points.forEach((pt, index) => {
         if (!pt) return;
-        // Invert the Y-axis to match classic mathematical charts (0 at the bottom)
-        const px = pt.x * cellSize + (cellSize / 2);
-        const py = canvas.height - (pt.y * cellSize + (cellSize / 2));
+        const px = padding + pt.x * cellSize + (cellSize / 2);
+        const py = canvas.height - padding - (pt.y * cellSize + (cellSize / 2));
+        if (index === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]); // Resetta il tratteggio per i prossimi disegni
+
+      // 3. Disegna i punti con Effetto Glow e Etichette
+      points.forEach((pt, index) => {
+        if (!pt) return;
+        const px = padding + pt.x * cellSize + (cellSize / 2);
+        const py = canvas.height - padding - (pt.y * cellSize + (cellSize / 2));
         
-        // Draw Point
+        // Effetto Glow sul punto
+        ctx.shadowColor = "#ff9800";
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = "#ff9800";
+        
         ctx.beginPath();
         ctx.arc(px, py, 6, 0, Math.PI * 2);
         ctx.fill();
         
-        // Point label (e.g., 1G) - slightly offset for readability
-        ctx.fillStyle = "#e0e0e0"; // Light gray text for the labels
-        ctx.fillText(`${index + 1}G`, px + 10, py - 10);
-        ctx.fillStyle = "#ff9800"; // Restore orange for the next point
+        // Disattiva il glow per il testo
+        ctx.shadowBlur = 0;
+        
+        // Etichetta del punto
+        const labelText = `${index + 1}G`;
+        ctx.font = "bold 12px sans-serif";
+        const textWidth = ctx.measureText(labelText).width;
+        
+        // Sfondo scuro per l'etichetta (migliora la leggibilità)
+        ctx.fillStyle = "rgba(18, 18, 18, 0.85)";
+        ctx.fillRect(px + 10, py - 18, textWidth + 6, 16);
+        
+        // Testo dell'etichetta
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "left";
+        ctx.fillText(labelText, px + 13, py - 10);
       });
     });
+  </script>
   </script>
 </body>
 </html>
