@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework 1 - Analisi Dati</title>
+  
+  <!-- Il percorso include ../ perché hw1.html è dentro la cartella statistics/ -->
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="scanlines"></div>
+  
+  <main id="main-content">
+    
+    <!-- SEZIONE 1: RICERCA TEORICA -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat intro.txt</span></div>
+    
+    <div class="text-content">
+      <p>Questo progetto esplora i fondamenti della pulizia dei dati e del preprocessing.</p>
+      <br>
+      <p>L'obiettivo principale è stato identificare i valori anomali in un dataset di misurazioni fisiche e preparare la struttura dati per un successivo modello di regressione lineare. Sono state applicate tecniche di normalizzazione Z-score per uniformare la scala delle variabili.</p>
+    </div>
 
+    <!-- SEZIONE 2: APPLICAZIONE ALGORITMO -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat preprocessing.r</span></div>
+    
+    <pre><code># Importazione dataset
+dataset <- read.csv("dati_grezzi.csv")
+
+# Rimozione valori nulli
+dataset_pulito <- na.omit(dataset)
+
+# Calcolo dello Z-score per la colonna 'pressione'
+dataset_pulito$pressione_z <- scale(dataset_pulito$pressione)
+
+# Filtraggio outlier (|Z| > 3)
+dataset_finale <- subset(dataset_pulito, abs(pressione_z) <= 3)
+
+print("Preprocessing completato con successo.")</code></pre>
+
+    <!-- SEZIONE 3: APERTURA PDF (Opzione 1) -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">xdg-open report_finale.pdf</span></div>
+    
+    <div class="text-content">
+      <p class="comment">// Avvio del visualizzatore grafico esterno in corso...</p>
+      
+      <ul id="nav-list" style="margin-top: 15px;">
+        <li>
+          <!-- Il tag target="_blank" permette di aprire il file in una nuova scheda del browser -->
+          <a href="il_tuo_file.pdf" target="_blank" class="nav-item focus-target">
+            <span class="perms">-rwxr-xr-x</span>
+            <span class="size">2.4M</span>
+            <span class="name">[ APRI REPORT PDF ]</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- MENU DI USCITA -->
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cd ..</span></div>
+    <ul id="nav-list">
+      <li>
+        <a href="index.html" class="nav-item">
+          <span class="perms">drwxr-xr-x</span>
+          <span class="name">[ cd .. ] Torna alla lista Homework</span>
+        </a>
+      </li>
+    </ul>
+    
+    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="cursor">█</span></div>
+  </main>
+
+  <script src="../script.js"></script>
+</body>
+</html>
