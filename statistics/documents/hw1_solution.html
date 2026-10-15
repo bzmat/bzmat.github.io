@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homework 1 - Public-Key Cryptography</title>
   
   <style>
-    /* Stile pulito, moderno e accademico */
+    /* Clean, modern, academic dark mode style */
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.6;
-      color: #333;
-      background-color: #f9fafb;
+      color: #e0e0e0;
+      background-color: #121212;
       margin: 0;
       padding: 40px 20px;
     }
@@ -19,22 +19,23 @@
     .container {
       max-width: 800px;
       margin: 0 auto;
-      background-color: #ffffff;
+      background-color: #1e1e1e;
       padding: 40px;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
     }
 
     h1 {
       font-size: 2em;
-      color: #111827;
+      color: #ffffff;
       margin-bottom: 10px;
     }
 
     h2 {
       font-size: 1.5em;
-      color: #1f2937;
-      border-bottom: 2px solid #e5e7eb;
+      color: #ffffff;
+      border-bottom: 2px solid #333;
       padding-bottom: 8px;
       margin-top: 40px;
       margin-bottom: 20px;
@@ -54,47 +55,48 @@
       margin-bottom: 10px;
     }
 
-    /* Stile per i blocchi di codice e output matematico */
+    /* Style for code blocks and mathematical output */
     pre {
-      background-color: #f3f4f6;
+      background-color: #2d2d2d;
       padding: 15px;
       border-radius: 6px;
       overflow-x: auto;
       font-family: 'Courier New', Courier, monospace;
       font-size: 14px;
-      color: #1f2937;
-      border: 1px solid #e5e7eb;
+      color: #e0e0e0;
+      border: 1px solid #444;
     }
 
+    /* Orange highlight class */
     .highlight {
       font-weight: bold;
-      color: #2563eb;
+      color: #ff9800; /* Orange */
     }
 
-    /* Stile per il canvas del grafico */
+    /* Style for the canvas chart */
     canvas {
       display: block;
       margin: 30px auto;
-      border: 1px solid #d1d5db;
-      background-color: #ffffff;
+      border: 1px solid #444;
+      background-color: #1e1e1e;
       border-radius: 4px;
     }
 
-    /* Pulsante per tornare indietro */
+    /* Back button */
     .back-link {
       display: inline-block;
       margin-top: 40px;
       padding: 10px 20px;
-      background-color: #2563eb;
-      color: #ffffff;
+      background-color: #ff9800; /* Orange */
+      color: #121212; /* Dark text for contrast */
       text-decoration: none;
       border-radius: 6px;
-      font-weight: 500;
+      font-weight: bold;
       transition: background-color 0.2s;
     }
 
     .back-link:hover {
-      background-color: #1d4ed8;
+      background-color: #e68a00;
     }
   </style>
 </head>
@@ -104,49 +106,49 @@
     <h1>Homework 1</h1>
     <p><strong>Public-Key Cryptography in Ethereum (ECC)</strong></p>
 
-    <!-- SEZIONE 1: INTRODUZIONE -->
-    <h2>1. Descrizione del Problema</h2>
+    <!-- SECTION 1: INTRODUCTION -->
+    <h2>1. Problem Description</h2>
     <p>
-      L'obiettivo di questo progetto è dimostrare il funzionamento della <em>Elliptic-Curve Scalar Multiplication</em> come funzione crittografica unidirezionale. Invece della complessa curva <code>secp256k1</code> utilizzata dalla rete Ethereum, utilizzeremo una curva giocattolo (toy curve) su un campo finito per scopi didattici.
+      The goal of this project is to demonstrate how <em>Elliptic-Curve Scalar Multiplication</em> operates as a one-way cryptographic function. Instead of the complex <code>secp256k1</code> curve used by the Ethereum network, we will use a toy curve over a finite field for educational purposes.
     </p>
     <ul>
-      <li><strong>Curva:</strong> $y^2 \equiv x^3 + 7 \pmod{17}$</li>
-      <li><strong>Base Point (G):</strong> $(1, 5)$</li>
-      <li><strong>Private Key (k):</strong> $6$</li>
+      <li><strong>Curve:</strong> y² ≡ x³ + 7 (mod 17)</li>
+      <li><strong>Base Point (G):</strong> (1, 5)</li>
+      <li><strong>Private Key (k):</strong> 6</li>
     </ul>
 
-    <!-- SEZIONE 2: ESECUZIONE E GRAFICO -->
-    <h2>2. Calcolo e Visualizzazione</h2>
+    <!-- SECTION 2: EXECUTION AND CHART -->
+    <h2>2. Computation and Visualization</h2>
     <p>
-      Il seguente output mostra il calcolo iterativo per derivare la chiave pubblica $Q = kG$ partendo dal Base Point $G$. 
-      Il grafico sottostante rappresenta la griglia del campo finito (Modulo 17), mostrando come le coordinate saltino in modo apparentemente caotico ma algebricamente deterministico.
+      The following output displays the iterative computation to derive the public key <span class="highlight">Q = kG</span> starting from the Base Point <em>G</em>. 
+      The chart below represents the finite field grid (Modulo 17), illustrating how the coordinates jump in a seemingly chaotic yet algebraically deterministic manner.
     </p>
 
-    <pre id="cli-output">Calcolando i punti per k = 6...\n\n</pre>
+    <pre id="cli-output">Computing points for k = 6...\n\n</pre>
     
     <canvas id="ecc-canvas" width="400" height="400"></canvas>
 
-    <!-- SEZIONE 3: ESPLORAZIONE STATISTICA -->
-    <h2>3. Esplorazione Statistica</h2>
+    <!-- SECTION 3: STATISTICAL EXPLORATION -->
+    <h2>3. Statistical Exploration</h2>
     <p>
-      Ripetendo l'esperimento con valori diversi di $k$, emergono proprietà statistiche chiave che differenziano le curve ellittiche (ECDLP) dalle classiche funzioni di hash crittografico (es. SHA-256):
+      Repeating the experiment with different values of <em>k</em> reveals key statistical properties that differentiate elliptic curves (ECDLP) from standard cryptographic hash functions (e.g., SHA-256):
     </p>
     <ul>
-      <li><strong>Distribuzione Uniforme:</strong> Su curve reali, le coordinate $(x, y)$ generate da chiavi private casuali risultano uniformemente distribuite in tutto il campo finito. Nessun punto "valido" è statisticamente più probabile di un altro.</li>
-      <li><strong>Correlazione Input-Output:</strong> Nella ECC, la moltiplicazione scalare mappa linearmente $k$ a $Q$ attraverso somme algebriche. Tuttavia, invertire il processo per trovare $k$ a partire da $Q$ nel campo discreto richiede forza bruta (problema del logaritmo discreto).</li>
-      <li><strong>Effetto Valanga (Avalanche Effect):</strong> Le funzioni Hash sono progettate affinché cambiando 1 bit dell'input si alteri circa il 50% dell'output. La ECC non nasce con questo vincolo sui bit: cambiando $k$ in $k+1$, il punto risultante cambia in modo prevedibile ($Q + G$), sebbene le coordinate appaiano scorrelate a livello visivo a causa del modulo.</li>
-      <li><strong>Conclusione:</strong> La moltiplicazione scalare della curva ellittica è una <em>Trapdoor One-Way Function</em> (unidirezionale con "scorciatoia" matematica se si possiede la chiave), mentre un Hash è una funzione di compressione unidirezionale priva di chiavi.</li>
+      <li><strong class="highlight">Uniform Distribution:</strong> On real curves, the (x, y) coordinates generated by random private keys are uniformly distributed across the finite field. No "valid" point is statistically more likely than another.</li>
+      <li><strong class="highlight">Input-Output Correlation:</strong> In ECC, scalar multiplication maps <em>k</em> linearly to <em>Q</em> through algebraic additions. However, reversing the process to find <em>k</em> from <em>Q</em> in the discrete field requires brute force (the discrete logarithm problem).</li>
+      <li><strong class="highlight">Avalanche Effect:</strong> Hash functions are designed so that changing 1 bit of the input alters roughly 50% of the output. ECC is not built with this bit-level constraint: changing <em>k</em> to <em>k+1</em> predictably changes the resulting point (Q + G), although the coordinates appear visually uncorrelated due to the modulo operation.</li>
+      <li><strong class="highlight">Conclusion:</strong> Elliptic curve scalar multiplication is a <em>Trapdoor One-Way Function</em> (one-way with a mathematical "shortcut" if you possess the key), whereas a Hash is a one-way compression function without keys.</li>
     </ul>
 
-    <!-- MENU DI USCITA -->
-    <a href="index.html" class="back-link">&larr; Torna alla lista Homework</a>
+    <!-- EXIT MENU -->
+    <a href="index.html" class="back-link">&larr; Back to Homework list</a>
   </div>
 
-  <!-- SCRIPT SPECIFICO PER L'HOMEWORK (Logica ECC e Canvas) -->
+  <!-- SCRIPT SPECIFIC TO THE HOMEWORK (ECC Logic and Canvas) -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const p = 17; // Modulo
-      const a = 0;  // Parametro a (x^3 + ax + b)
+      const a = 0;  // Parameter a (x^3 + ax + b)
       let G = { x: 1, y: 5 }; // Base point
       const k = 6;  // Private key
       
@@ -154,10 +156,10 @@
       const canvas = document.getElementById("ecc-canvas");
       const ctx = canvas.getContext("2d");
       
-      // Funzione per modulo matematico corretto anche per numeri negativi
+      // Function for correct mathematical modulo (handles negative numbers)
       function mod(n, m) { return ((n % m) + m) % m; }
 
-      // Inverso moltiplicativo modulare usando forza bruta (poiché p=17 è piccolo)
+      // Modular multiplicative inverse using brute force (since p=17 is small)
       function modInverse(n, m) {
         n = mod(n, m);
         for (let i = 1; i < m; i++) {
@@ -166,17 +168,17 @@
         return 1;
       }
 
-      // Addizione di punti su Curva Ellittica
+      // Point addition on Elliptic Curve
       function addPoints(P, Q) {
         if (!P) return Q;
         if (!Q) return P;
         
         let lambda;
         if (P.x === Q.x && P.y === Q.y) {
-          if (P.y === 0) return null; // Punto all'infinito
+          if (P.y === 0) return null; // Point at infinity
           lambda = mod((3 * Math.pow(P.x, 2) + a) * modInverse(2 * P.y, p), p);
         } else {
-          if (P.x === Q.x) return null; // Punto all'infinito
+          if (P.x === Q.x) return null; // Point at infinity
           lambda = mod((Q.y - P.y) * modInverse(Q.x - P.x, p), p);
         }
         
@@ -185,10 +187,10 @@
         return { x: x3, y: y3 };
       }
 
-      // Esecuzione calcoli
+      // Execute calculations
       let currentPoint = G;
       const points = [G];
-      let logText = `1G = (${G.x}, ${G.y})  <-- BASE POINT (Generatore)\n`;
+      let logText = `1G = (${G.x}, ${G.y})  <-- BASE POINT (Generator)\n`;
       
       for (let i = 2; i <= k; i++) {
         currentPoint = addPoints(currentPoint, G);
@@ -202,12 +204,12 @@
       
       output.innerHTML += logText;
 
-      // Disegno Grafico su Canvas
+      // Draw Chart on Canvas
       const gridSize = 17;
       const cellSize = canvas.width / gridSize;
       
-      // 1. Disegna la griglia di sfondo (grigio chiaro)
-      ctx.strokeStyle = "#e5e7eb";
+      // 1. Draw background grid (dark gray)
+      ctx.strokeStyle = "#333333";
       for(let i = 0; i <= gridSize; i++) {
         ctx.beginPath();
         ctx.moveTo(i * cellSize, 0);
@@ -219,25 +221,25 @@
         ctx.stroke();
       }
 
-      // 2. Plotting dei punti calcolati con animazione/numerazione
-      ctx.fillStyle = "#2563eb"; // Blu elegante per i punti
+      // 2. Plot the calculated points with animation/numbering
+      ctx.fillStyle = "#ff9800"; // Orange for the points
       ctx.font = "bold 14px sans-serif";
       
       points.forEach((pt, index) => {
         if (!pt) return;
-        // Invertiamo l'asse Y per far combaciare i grafici matematici classici (0 in basso)
+        // Invert the Y-axis to match classic mathematical charts (0 at the bottom)
         const px = pt.x * cellSize + (cellSize / 2);
         const py = canvas.height - (pt.y * cellSize + (cellSize / 2));
         
-        // Disegno del Punto
+        // Draw Point
         ctx.beginPath();
         ctx.arc(px, py, 6, 0, Math.PI * 2);
         ctx.fill();
         
-        // Testo del punto (es. 1G) - leggermente sfalsato per leggibilità
-        ctx.fillStyle = "#111827";
+        // Point label (e.g., 1G) - slightly offset for readability
+        ctx.fillStyle = "#e0e0e0"; // Light gray text for the labels
         ctx.fillText(`${index + 1}G`, px + 10, py - 10);
-        ctx.fillStyle = "#2563eb"; // Ripristina il blu per il prossimo punto
+        ctx.fillStyle = "#ff9800"; // Restore orange for the next point
       });
     });
   </script>
