@@ -1,1 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Statistics - Homeworks</title>
+  <!-- Usa ../ per indicare che il CSS è nella cartella superiore -->
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="scanlines"></div>
+  
+  <main id="main-content">
+    <div class="prompt">guest@portfolio:~/sapienza_projects/statistics$ <span class="command">ls -l</span></div>
+    <p class="comment">// Lista degli Homework consegnati. Frecce ↑ ↓ per navigare.</p>
+    
+    <ul id="nav-list">
+      <!-- Generiamo 10 link, da hw1 a hw10 -->
+      <li><a href="hw1.html" class="nav-item focus-target"><span class="perms">-rw-r--r--</span> <span class="name">hw1_data_cleaning.html</span></a></li>
+      <li><a href="hw2.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw2_probability.html</span></a></li>
+      <li><a href="hw3.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw3_distributions.html</span></a></li>
+      <li><a href="hw4.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw4_hypothesis_testing.html</span></a></li>
+      <li><a href="hw5.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw5_anova.html</span></a></li>
+      <li><a href="hw6.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw6_linear_regression.html</span></a></li>
+      <li><a href="hw7.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw7_multiple_regression.html</span></a></li>
+      <li><a href="hw8.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw8_logistic_regression.html</span></a></li>
+      <li><a href="hw9.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw9_time_series.html</span></a></li>
+      <li><a href="hw10.html" class="nav-item"><span class="perms">-rw-r--r--</span> <span class="name">hw10_final_project.html</span></a></li>
+      
+      <br>
+      <li>
+        <!-- Usa ../ per tornare a sapienza.html -->
+        <a href="../sapienza.html" class="nav-item">
+          <span class="perms">drwxr-xr-x</span>
+          <span class="name">[ cd .. ] Torna a Sapienza Projects</span>
+        </a>
+      </li>
+    </ul>
+    <div class="prompt">guest@portfolio:~/sapienza_projects/statistics$ <span class="cursor">█</span></div>
+  </main>
 
+  <!-- Usa ../ per lo script JS -->
+  <script src="../script.js"></script>
+</body>
+</html>
