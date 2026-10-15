@@ -4,81 +4,144 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homework 1 - Public-Key Cryptography</title>
-  <link rel="stylesheet" href="../style.css">
+  
   <style>
-    /* Stili specifici per il canvas del grafico */
-    #ecc-canvas {
-      border: 1px dashed #00FF41;
-      background-color: rgba(0, 255, 65, 0.05);
-      margin: 15px 0;
-      image-rendering: pixelated;
+    /* Stile pulito, moderno e accademico */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 40px 20px;
     }
-    .highlight { color: #ffffff; font-weight: bold; }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: #1f2937;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 8px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    ul {
+      margin-bottom: 20px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    /* Stile per i blocchi di codice e output matematico */
+    pre {
+      background-color: #f3f4f6;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      color: #1f2937;
+      border: 1px solid #e5e7eb;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    /* Stile per il canvas del grafico */
+    canvas {
+      display: block;
+      margin: 30px auto;
+      border: 1px solid #d1d5db;
+      background-color: #ffffff;
+      border-radius: 4px;
+    }
+
+    /* Pulsante per tornare indietro */
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .back-link:hover {
+      background-color: #1d4ed8;
+    }
   </style>
 </head>
 <body>
-  <div class="scanlines"></div>
-  
-  <main id="main-content">
-    
-    <!-- SEZIONE 1: DESCRIZIONE DELL'HOMEWORK -->
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat assignment.txt</span></div>
-    
-    <div class="text-content">
-      <p><strong>HMWK 1: Public-Key Cryptography in Ethereum (ECC)</strong></p>
-      <p>L'obiettivo è dimostrare il funzionamento della <em>Elliptic-Curve Scalar Multiplication</em> come funzione crittografica unidirezionale. Invece della complessa secp256k1 usata da Ethereum, utilizzeremo una curva giocattolo (toy curve) per scopi didattici.</p>
-      <br>
-      <ul style="list-style-type: none;">
-        <li>> Curva: y² = x³ + 7 (mod 17)</li>
-        <li>> Base Point (G): (1, 5)</li>
-        <li>> Private Key (k): 6</li>
-      </ul>
-    </div>
 
-    <!-- SEZIONE 2: ESECUZIONE SCRIPT E GRAFICO -->
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">node ecdlp_simulator.js --visualize</span></div>
+  <div class="container">
+    <h1>Homework 1</h1>
+    <p><strong>Public-Key Cryptography in Ethereum (ECC)</strong></p>
+
+    <!-- SEZIONE 1: INTRODUZIONE -->
+    <h2>1. Descrizione del Problema</h2>
+    <p>
+      L'obiettivo di questo progetto è dimostrare il funzionamento della <em>Elliptic-Curve Scalar Multiplication</em> come funzione crittografica unidirezionale. Invece della complessa curva <code>secp256k1</code> utilizzata dalla rete Ethereum, utilizzeremo una curva giocattolo (toy curve) su un campo finito per scopi didattici.
+    </p>
+    <ul>
+      <li><strong>Curva:</strong> $y^2 \equiv x^3 + 7 \pmod{17}$</li>
+      <li><strong>Base Point (G):</strong> $(1, 5)$</li>
+      <li><strong>Private Key (k):</strong> $6$</li>
+    </ul>
+
+    <!-- SEZIONE 2: ESECUZIONE E GRAFICO -->
+    <h2>2. Calcolo e Visualizzazione</h2>
+    <p>
+      Il seguente output mostra il calcolo iterativo per derivare la chiave pubblica $Q = kG$ partendo dal Base Point $G$. 
+      Il grafico sottostante rappresenta la griglia del campo finito (Modulo 17), mostrando come le coordinate saltino in modo apparentemente caotico ma algebricamente deterministico.
+    </p>
+
+    <pre id="cli-output">Calcolando i punti per k = 6...\n\n</pre>
     
-    <div class="text-content">
-      <p class="comment">// Inizializzazione calcolo moltiplicazione scalare...</p>
-      
-      <!-- Qui il JS inserirà l'output testuale dei calcoli -->
-      <pre id="cli-output">Calcolando i punti per k = 6...\n</pre>
-      
-      <p class="comment">// Generazione rappresentazione visiva della curva (Mod 17)...</p>
-      <!-- Canvas per il grafico -->
-      <canvas id="ecc-canvas" width="400" height="400"></canvas>
-    </div>
+    <canvas id="ecc-canvas" width="400" height="400"></canvas>
 
     <!-- SEZIONE 3: ESPLORAZIONE STATISTICA -->
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cat statistical_exploration.md</span></div>
-    
-    <div class="text-content">
-      <p><strong>== STATISTICAL EXPLORATION ==</strong></p>
-      <p>Ripetendo l'esperimento con valori diversi di $k$, emergono proprietà statistiche chiave che differenziano le curve ellittiche (ECDLP) dalle classiche funzioni di hash crittografico (es. SHA-256):</p>
-      <br>
-      <ul>
-        <li><strong>Distribuzione Uniforme e Frequenza:</strong> Su curve reali (es. secp256k1), le coordinate (x, y) generate da chiavi private casuali risultano uniformemente distribuite in tutto il campo finito. Nessun punto "valido" è statisticamente più probabile di un altro, prevenendo attacchi basati su pattern.</li>
-        <li><strong>Correlazione Input-Output:</strong> Nella ECC, la moltiplicazione scalare (Q = kG) mappa linearmente $k$ a $Q$ attraverso somme algebriche. Nonostante la formula sia predeterminata, trovare $k$ a partire da $Q$ nel campo discreto richiede forza bruta (problema del logaritmo discreto), rendendo la correlazione non invertibile in tempi utili.</li>
-        <li><strong>Effetto Valanga (Avalanche Effect):</strong> Questo è il tratto distintivo. Le funzioni Hash (come SHA) sono progettate per un effetto valanga puro: cambiare 1 bit dell'input altera ~50% dei bit dell'output. La ECC <em>non</em> nasce con questo vincolo statistico sui bit: cambiando $k$ in $k+1$, il punto risultante cambia in modo prevedibile (Q + G), sebbene le coordinate appaiano scorrelate a livello visivo a causa del modulo primo.</li>
-        <li><strong>Conclusione:</strong> La moltiplicazione scalare della curva ellittica è una <em>Trapdoor One-Way Function</em> (unidirezionale con "scorciatoia" matematica se si ha la chiave), mentre un Hash è una funzione di compressione unidirezionale priva di chiavi e scorciatoie algebriche.</li>
-      </ul>
-    </div>
+    <h2>3. Esplorazione Statistica</h2>
+    <p>
+      Ripetendo l'esperimento con valori diversi di $k$, emergono proprietà statistiche chiave che differenziano le curve ellittiche (ECDLP) dalle classiche funzioni di hash crittografico (es. SHA-256):
+    </p>
+    <ul>
+      <li><strong>Distribuzione Uniforme:</strong> Su curve reali, le coordinate $(x, y)$ generate da chiavi private casuali risultano uniformemente distribuite in tutto il campo finito. Nessun punto "valido" è statisticamente più probabile di un altro.</li>
+      <li><strong>Correlazione Input-Output:</strong> Nella ECC, la moltiplicazione scalare mappa linearmente $k$ a $Q$ attraverso somme algebriche. Tuttavia, invertire il processo per trovare $k$ a partire da $Q$ nel campo discreto richiede forza bruta (problema del logaritmo discreto).</li>
+      <li><strong>Effetto Valanga (Avalanche Effect):</strong> Le funzioni Hash sono progettate affinché cambiando 1 bit dell'input si alteri circa il 50% dell'output. La ECC non nasce con questo vincolo sui bit: cambiando $k$ in $k+1$, il punto risultante cambia in modo prevedibile ($Q + G$), sebbene le coordinate appaiano scorrelate a livello visivo a causa del modulo.</li>
+      <li><strong>Conclusione:</strong> La moltiplicazione scalare della curva ellittica è una <em>Trapdoor One-Way Function</em> (unidirezionale con "scorciatoia" matematica se si possiede la chiave), mentre un Hash è una funzione di compressione unidirezionale priva di chiavi.</li>
+    </ul>
 
     <!-- MENU DI USCITA -->
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="command">cd ..</span></div>
-    <ul id="nav-list">
-      <li>
-        <a href="index.html" class="nav-item focus-target">
-          <span class="name">[ cd .. ] Torna alla lista Homework</span>
-        </a>
-      </li>
-    </ul>
-    
-    <div class="prompt">guest@portfolio:~/statistics/hw1$ <span class="cursor">█</span></div>
-  </main>
+    <a href="index.html" class="back-link">&larr; Torna alla lista Homework</a>
+  </div>
 
-  <script src="../script.js"></script>
-  
   <!-- SCRIPT SPECIFICO PER L'HOMEWORK (Logica ECC e Canvas) -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -125,7 +188,7 @@
       // Esecuzione calcoli
       let currentPoint = G;
       const points = [G];
-      let logText = `1G = (${G.x}, ${G.y})  <-- BASE POINT\n`;
+      let logText = `1G = (${G.x}, ${G.y})  <-- BASE POINT (Generatore)\n`;
       
       for (let i = 2; i <= k; i++) {
         currentPoint = addPoints(currentPoint, G);
@@ -143,8 +206,8 @@
       const gridSize = 17;
       const cellSize = canvas.width / gridSize;
       
-      // 1. Disegna la griglia
-      ctx.strokeStyle = "rgba(0, 255, 65, 0.2)";
+      // 1. Disegna la griglia di sfondo (grigio chiaro)
+      ctx.strokeStyle = "#e5e7eb";
       for(let i = 0; i <= gridSize; i++) {
         ctx.beginPath();
         ctx.moveTo(i * cellSize, 0);
@@ -157,8 +220,8 @@
       }
 
       // 2. Plotting dei punti calcolati con animazione/numerazione
-      ctx.fillStyle = "#00FF41";
-      ctx.font = "14px Courier New";
+      ctx.fillStyle = "#2563eb"; // Blu elegante per i punti
+      ctx.font = "bold 14px sans-serif";
       
       points.forEach((pt, index) => {
         if (!pt) return;
@@ -166,13 +229,15 @@
         const px = pt.x * cellSize + (cellSize / 2);
         const py = canvas.height - (pt.y * cellSize + (cellSize / 2));
         
-        // Punto
+        // Disegno del Punto
         ctx.beginPath();
-        ctx.arc(px, py, 5, 0, Math.PI * 2);
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
         ctx.fill();
         
-        // Testo del punto (es. 1G)
-        ctx.fillText(`${index + 1}G`, px + 8, py - 8);
+        // Testo del punto (es. 1G) - leggermente sfalsato per leggibilità
+        ctx.fillStyle = "#111827";
+        ctx.fillText(`${index + 1}G`, px + 10, py - 10);
+        ctx.fillStyle = "#2563eb"; // Ripristina il blu per il prossimo punto
       });
     });
   </script>
