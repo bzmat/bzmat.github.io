@@ -1,1 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio - Sapienza Projects</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scanlines"></div>
+  
+  <main id="main-content">
+    <div class="prompt">guest@portfolio:~$ <span class="command">ls -l sapienza_projects/</span></div>
+    <p class="comment">// Seleziona un corso. Frecce ↑ ↓ per navigare, INVIO per aprire.</p>
+    
+    <ul id="nav-list">
+      <li>
+        <!-- Link alla cartella statistics -->
+        <a href="statistics/index.html" class="nav-item focus-target">
+          <span class="perms">drwxr-xr-x</span>
+          <span class="size">4096</span>
+          <span class="date">Oct 15 11:00</span>
+          <span class="name">statistics/</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html" class="nav-item">
+          <span class="perms">drwxr-xr-x</span>
+          <span class="size">4096</span>
+          <span class="date">--- -- --:--</span>
+          <span class="name">[ cd .. ] Return to Home</span>
+        </a>
+      </li>
+    </ul>
+    <div class="prompt">guest@portfolio:~/sapienza_projects$ <span class="cursor">█</span></div>
+  </main>
 
+  <script src="script.js"></script>
+</body>
+</html>
