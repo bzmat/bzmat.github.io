@@ -1,6 +1,6 @@
 /* =========================================
-           RESET E IMPOSTAZIONI GLOBALI
-           ========================================= */
+   RESET E IMPOSTAZIONI GLOBALI
+   ========================================= */
 * {
    margin: 0;
    padding: 0;
@@ -16,41 +16,30 @@ body {
    padding: 20px;
    text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
    overflow-x: hidden;
-   /* Prevent scrolling when using arrow keys */
    overscroll-behavior: none; 
 }
 
 /* =========================================
-  EFFETTO RETRÒ: SCANLINES E GLOW
-  ========================================= */
+   EFFETTO RETRÒ: SCANLINES
+   ========================================= */
 body::before {
    content: " ";
    display: block;
    position: fixed;
-   top: 0;
-   left: 0;
-   bottom: 0;
-   right: 0;
+   top: 0; left: 0; bottom: 0; right: 0;
    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
    z-index: 10;
    background-size: 100% 4px, 3px 100%;
-   pointer-events: none; /* Let clicks pass through */
+   pointer-events: none;
 }
 
 /* =========================================
-  PROMPT DEI COMANDI E TESTI
-  ========================================= */
-.prompt-line {
+   PROMPT DEI COMANDI
+   ========================================= */
+.prompt {
    margin-bottom: 15px;
-   display: flex;
-   align-items: center;
-   flex-wrap: wrap;
+   color: #00FF41;
 }
-
-.user { color: #00FF41; font-weight: bold; }
-.host { color: #00FF41; font-weight: bold; }
-.path { color: #3498db; font-weight: bold; } /* Changed path color for slight contrast */
-.symbol { margin-right: 8px; color: #00FF41; }
 
 .command {
    color: #ffffff;
@@ -58,20 +47,17 @@ body::before {
 }
 
 .comment {
-   color: #888888; /* Gray for comments */
+   color: #888888;
    margin-bottom: 15px;
    font-style: italic;
    text-shadow: none;
 }
 
 /* =========================================
-  LINK E NAVIGAZIONE
-  ========================================= */
-/* =========================================
-   LINK E NAVIGAZIONE (CORRETTO)
+   LINK E NAVIGAZIONE (MENU LISTA)
    ========================================= */
 ul#nav-list {
-   list-style: none; /* Rimuove i pallini della lista */
+   list-style: none;
    display: flex;
    flex-direction: column;
    gap: 5px;
@@ -80,18 +66,17 @@ ul#nav-list {
 }
 
 .nav-item {
-   display: flex; /* Allinea gli span interni sulla stessa riga */
+   display: inline-flex;
    align-items: center;
    color: #00FF41;
    text-decoration: none;
    padding: 4px 8px;
    position: relative;
    cursor: pointer;
-   width: fit-content; /* Lo sfondo verde avvolgerà solo il testo, non tutta la riga */
-   z-index: 3;
+   z-index: 15; /* Assicura che i link stiano sopra gli effetti scanlines */
 }
 
-/* Distanzia gli elementi interni (permessi, data, nome) */
+/* Distanzia i vari elementi testuali dentro il link */
 .nav-item span {
    margin-right: 15px;
 }
@@ -100,7 +85,9 @@ ul#nav-list {
 .nav-item::before { content: "[ "; opacity: 0.5; margin-right: 8px; }
 .nav-item::after { content: " ]"; opacity: 0.5; margin-left: 8px; }
 
-/* STATO HOVER (Mouse) E FOCUS (Frecce Tastiera) */
+/* =========================================
+   STATO HOVER (Mouse) E FOCUS (Tastiera)
+   ========================================= */
 .nav-item:hover, 
 .nav-item.focus-target {
    background-color: #00FF41 !important;
@@ -109,23 +96,25 @@ ul#nav-list {
    outline: none;
 }
 
-/* Forza gli elementi INTERNI a diventare neri durante l'hover */
+/* Forza gli elementi INTERNI a diventare neri */
 .nav-item:hover *, 
 .nav-item.focus-target * {
    color: #000000 !important;
    text-shadow: none !important;
 }
 
-/* Rende le parentesi quadre nere e 100% visibili durante l'hover */
-.nav-item:hover::before, .nav-item:hover::after,
-.nav-item.focus-target::before, .nav-item.focus-target::after {
+/* Rende le parentesi quadre nere e visibili */
+.nav-item:hover::before, 
+.nav-item:hover::after,
+.nav-item.focus-target::before, 
+.nav-item.focus-target::after {
    opacity: 1 !important;
    color: #000000 !important;
 }
 
 /* =========================================
-  CURSORE E VIEWS
-  ========================================= */
+   CURSORE LAMPEGGIANTE
+   ========================================= */
 .cursor {
    display: inline-block;
    width: 10px;
@@ -140,44 +129,4 @@ ul#nav-list {
 @keyframes blink-cursor {
    0%, 100% { opacity: 1; }
    50% { opacity: 0; }
-}
-
-.view {
-   display: none; /* Nascondi tutte le view di default */
-   animation: fadeIn 0.2s ease-in;
-}
-
-.view.active-view {
-   display: block; /* Mostra solo la view attiva */
-}
-
-@keyframes fadeIn {
-   from { opacity: 0; transform: translateY(5px); }
-   to { opacity: 1; transform: translateY(0); }
-}
-
-.content-block {
-   padding-left: 10px;
-   margin-bottom: 20px;
-   max-width: 800px;
-}
-
-.content-block p {
-   margin-bottom: 10px;
-}
-
-/* Effetto hover con il mouse OPPURE quando selezionato con la tastiera */
-/* Effetto hover con il mouse OPPURE quando selezionato con la tastiera */
-.nav-item:hover, 
-.nav-item.focus-target {
-   background-color: #00FF41;
-   color: #000000;
-   outline: none;
-}
-
-/* Assicura che anche gli pseudoelementi [ e ] cambino colore con la tastiera */
-.nav-item.focus-target::before,
-.nav-item.focus-target::after {
-   opacity: 1;
-   color: #000000;
 }
