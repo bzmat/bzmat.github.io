@@ -117,30 +117,31 @@
       Using the elliptic curve framework developed previously, we can implement a basic asymmetric encryption scheme (similar to ElGamal ECC). 
     </p>
     <ul>
-      <li><strong class="highlight">The Keys:</strong> The private key $k$ is a randomly chosen scalar. The public key is a point on the curve $Q = kG$.</li>
-      <li><strong class="highlight">Encryption:</strong> To encrypt a message $M$ (mapped to a point on the curve), the sender generates a random ephemeral key $r$. The ciphertext consists of two points: $C_1 = rG$ and $C_2 = M + rQ$.</li>
-      <li><strong class="highlight">Decryption:</strong> The receiver uses their private key $k$ to compute $kC_1 = k(rG) = r(kG) = rQ$. They then recover the message by subtracting this from $C_2$: $M = C_2 - kC_1$.</li>
+      <li><strong class="highlight">The Keys:</strong> The private key <em>k</em> is a randomly chosen scalar. The public key is a point on the curve <em>Q = kG</em>.</li>
+      <li><strong class="highlight">Encryption:</strong> To encrypt a message <em>M</em> (mapped to a point on the curve), the sender generates a random ephemeral key <em>r</em>. The ciphertext consists of two points: <em>C<sub>1</sub> = rG</em> and <em>C<sub>2</sub> = M + rQ</em>.</li>
+      <li><strong class="highlight">Decryption:</strong> The receiver uses their private key <em>k</em> to compute <em>kC<sub>1</sub> = k(rG) = r(kG) = rQ</em>. They then recover the message by subtracting this from <em>C<sub>2</sub></em>: <em>M = C<sub>2</sub> - kC<sub>1</sub></em>.</li>
     </ul>
-
+    
     <!-- SECTION 2: CAESAR CIPHER -->
     <h2>2. The Caesar Cipher</h2>
     <p>
       The Caesar cipher is one of the simplest symmetric encryption techniques. It operates by substituting each letter in the plaintext with a letter a fixed number of positions down the alphabet.
     </p>
     <ul>
-      <li><strong class="highlight">Encryption:</strong> $C = (P + k) \pmod{26}$, where $P$ is the plaintext letter index (0-25) and $k$ is the shift key.</li>
-      <li><strong class="highlight">Decryption:</strong> $P = (C - k) \pmod{26}$.</li>
+      <li><strong class="highlight">Encryption:</strong> <em>C = (P + k) mod 26</em>, where <em>P</em> is the plaintext letter index (0-25) and <em>k</em> is the shift key.</li>
+      <li><strong class="highlight">Decryption:</strong> <em>P = (C - k) mod 26</em>.</li>
     </ul>
-
+    
     <!-- SECTION 3: COMPARISON -->
     <h2>3. Comparing ECC and Caesar Schemes</h2>
     <p>While both algorithms obscure data, their mechanics and security profiles are fundamentally different.</p>
     <ul>
-      <li><strong class="highlight">Key Space:</strong> The Caesar cipher has a trivial key space of $25$ possible shifts. A proper ECC scheme (like secp256k1) has a key space of roughly $2^{256}$, making brute-force exhaustive search physically impossible.</li>
+      <li><strong class="highlight">Key Space:</strong> The Caesar cipher has a trivial key space of 25 possible shifts. A proper ECC scheme (like secp256k1) has a key space of roughly 2<sup>256</sup>, making brute-force exhaustive search physically impossible.</li>
       <li><strong class="highlight">Symmetry:</strong> Caesar is symmetric (same key for encryption/decryption). ECC is asymmetric (public key encrypts, private key decrypts).</li>
       <li><strong class="highlight">Statistical Properties:</strong> The Caesar cipher preserves the underlying statistical frequency of the plaintext (e.g., the most frequent letter in the ciphertext corresponds to 'E' in English). ECC ciphertext points, however, appear uniformly distributed and pseudo-random, leaking no statistical information about the original message.</li>
     </ul>
-
+    
+    <!-- SECTION 4: STATISTICAL CRYPTANALYSIS -->
     <!-- SECTION 4: STATISTICAL CRYPTANALYSIS -->
     <h2>4. Statistical Cryptanalysis of the Caesar Cipher</h2>
     <p>
@@ -159,16 +160,13 @@
     <!-- SECTION 5: ATTACKING THE TOY ECC -->
     <h2>5. Attacking the Restricted ECC Toy Scheme</h2>
     <p>
-      In our toy ECC scheme, the private key $k$ was restricted to a very small range to allow for manual calculations and easy visualization. This artificial restriction completely breaks the security of the system.
+      In our toy ECC scheme, the private key <em>k</em> was restricted to a very small range to allow for manual calculations and easy visualization. This artificial restriction completely breaks the security of the system.
     </p>
     <ul>
-      <li><strong class="highlight">The Attack (Exhaustive Search):</strong> To recover the private key, an attacker simply iterates through all possible small values of $i$ (1, 2, 3...) and computes $i \cdot G$. As soon as $i \cdot G = Q$ (the public key), the attacker has found the private key $k = i$.</li>
+      <li><strong class="highlight">The Attack (Exhaustive Search):</strong> To recover the private key, an attacker simply iterates through all possible small values of <em>i</em> (1, 2, 3...) and computes <em>i &middot; G</em>. As soon as <em>i &middot; G = Q</em> (the public key), the attacker has found the private key <em>k = i</em>.</li>
       <li><strong class="highlight">Comparison to Caesar Attack:</strong> The attack on the toy ECC is an <em>exhaustive key search</em> (brute force) made possible only by the artificially tiny key space. The attack on Caesar is a <em>statistical attack</em> exploiting structural weaknesses in the algorithm itself, regardless of how we search the keys.</li>
-      <li><strong class="highlight">Why it fails against real ECC:</strong> In standard <code>secp256k1</code>, the private key space is $\approx 2^{256}$. Calculating $i \cdot G$ iteratively for $2^{256}$ possibilities would take all the computers on Earth billions of years. Because ECC leaks no statistical data, there are no shortcuts like frequency analysis; the attacker is forced to solve the Elliptic Curve Discrete Logarithm Problem (ECDLP), which is currently computationally infeasible.</li>
+      <li><strong class="highlight">Why it fails against real ECC:</strong> In standard <code>secp256k1</code>, the private key space is &approx; 2<sup>256</sup>. Calculating <em>i &middot; G</em> iteratively for 2<sup>256</sup> possibilities would take all the computers on Earth billions of years. Because ECC leaks no statistical data, there are no shortcuts like frequency analysis; the attacker is forced to solve the Elliptic Curve Discrete Logarithm Problem (ECDLP), which is currently computationally infeasible.</li>
     </ul>
-
-    <a href="index.html" class="back-link">&larr; Back to Homework list</a>
-  </div>
 
   <!-- SCRIPT: CAESAR CIPHER & FREQUENCY ANALYSIS -->
   <script>
