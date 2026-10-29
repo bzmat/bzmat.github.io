@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework - Stochastic Penetration Process</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background-color: #121212;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: #ffffff;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 1.2em;
+      color: #ff9800;
+      margin-top: 25px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-bottom: 20px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #ff9800;
+    }
+
+    /* Interactive Controls Styling */
+    .controls-panel {
+      background-color: #2d2d2d;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      margin-bottom: 25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      align-items: end;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .control-group label {
+      font-size: 0.9em;
+      color: #bbb;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .control-group select, 
+    .control-group input {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border: 1px solid #555;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .btn-run {
+      background-color: #ff9800;
+      color: #121212;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      height: 37px;
+    }
+
+    .btn-run:hover {
+      background-color: #e68a00;
+    }
+
+    /* Canvas Layout */
+    .charts-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 20px 0;
+      justify-content: center;
+    }
+
+    .canvas-box {
+      background-color: #161616;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .canvas-box span {
+      display: block;
+      font-size: 0.85em;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+
+    canvas {
+      background-color: #121212;
+      border-radius: 4px;
+      display: block;
+    }
+
+    .stats-summary {
+      background-color: #2d2d2d;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      border-left: 4px solid #ff9800;
+      margin-bottom: 25px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.95em;
+    }
+
+    th, td {
+      border: 1px solid #444;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #2d2d2d;
+      color: #ff9800;
+    }
+
+    tr:nth-child(even) {
+      background-color: #252525;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #ff9800;
+      color: #121212;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .back-link:hover {
+      background-color: #e68a00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Homework: Stochastic Penetration Process</h1>
+    <p><strong>Asymptotic Behavior, Law of Large Numbers, and Central Limit Theorem in System Security</strong></p>
+
+    <!-- WORK DONE SUMMARY -->
+    <section class="text-content" style="margin-bottom: 30px;">
+      <h2>Work Done</h2>
+      <p>
+        In this study, I modeled the cumulative security penetration of <span class="highlight"><em>n</em> systems</span> subjected to <span class="highlight"><em>m</em> attackers</span> as a discrete-time stochastic process with independent and identically distributed (i.i.d.) increments. I implemented an interactive simulation engine in JavaScript comparing the <span class="highlight">Bernoulli</span> and <span class="highlight">Rademacher</span> increment models across three different scaling regimes: Total Score (<em>S<sub>n</sub></em>), Sample Average (<em>S<sub>n</sub> / n</em>), and Normalized Score (<em>S<sub>n</sub> / &radic;n</em>). This visually and empirically demonstrates the <span class="highlight">Law of Large Numbers (LLN)</span> and the <span class="highlight">Central Limit Theorem (CLT)</span>.
+      </p>
+    </section>
+
+    <!-- SECTION 1: MATHEMATICAL MODELS -->
+    <h2>1. Mathematical Models of Penetration Increments</h2>
+    <p>
+      Let <em>X<sub>1</sub>, X<sub>2</sub>, &hellip;, X<sub>n</sub></em> be independent and identically distributed random variables representing the penetration outcome at each system layer (from 1 to <em>n</em>) for a given attacker trajectory:
+    </p>
+    <ul>
+      <li>
+        <strong class="highlight">Bernoulli Model:</strong> <em>X<sub>i</sub> &isin; {0, 1}</em> with <em>P(X<sub>i</sub> = 1) = p</em> and <em>P(X<sub>i</sub> = 0) = 1 &minus; p</em>.<br>
+        Here, <em>X<sub>i</sub> = 1</em> indicates a successful breach of system <em>i</em>, while <em>0</em> indicates a blocked attempt. The expected value is <em>&mu; = E[X<sub>i</sub>] = p</em> and the variance is <em>&sigma;<sup>2</sup> = Var(X<sub>i</sub>) = p(1 &minus; p)</em>.
+      </li>
+      <li>
+        <strong class="highlight">Rademacher Model:</strong> <em>X<sub>i</sub> &isin; {&minus;1, +1}</em> with <em>P(X<sub>i</sub> = +1) = P(X<sub>i</sub> = &minus;1) = 1/2</em>.<br>
+        This represents a symmetric, zero-mean random walk where an attacker either gains ground (<em>+1</em>) or is pushed back by defensive countermeasures (<em>&minus;1</em>). Here, the mean is <em>&mu; = E[X<sub>i</sub>] = 0</em> and the variance is <em>&sigma;<sup>2</sup> = Var(X<sub>i</sub>) = 1</em>.
+      </li>
+    </ul>
+
+    <!-- SECTION 2: INTERACTIVE SIMULATION -->
+    <h2>2. Interactive Trajectory & Distribution Simulator</h2>
+    <p>
+      Adjust the number of systems (<em>n</em>), the number of attackers/trajectories (<em>m</em>), the increment model, and the scaling factor to observe how the sample paths and terminal distributions evolve.
+    </p>
+
+    <div class="controls-panel">
+      <div class="control-group">
+        <label for="model-select">Increment Model:</label>
+        <select id="model-select">
+          <option value="rademacher">Rademacher (&minus;1, +1 | p = 0.5)</option>
+          <option value="bernoulli">Bernoulli (0, 1 | p = 0.5)</option>
+          <option value="bernoulli_biased">Bernoulli Biased (0, 1 | p = 0.7)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="scale-select">Analyzed Quantity:</label>
+        <select id="scale-select">
+          <option value="total">Total Score: S_n</option>
+          <option value="average">Average Score: S_n / n (LLN)</option>
+          <option value="normalized" selected>Normalized: S_n / &radic;n (CLT)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="n-input">Systems (<em>n</em>): <span id="n-val" class="highlight">200</span></label>
+        <input type="range" id="n-input" min="10" max="1000" step="10" value="200">
+      </div>
+
+      <div class="control-group">
+        <label for="m-input">Attackers (<em>m</em>): <span id="m-val" class="highlight">300</span></label>
+        <input type="range" id="m-input" min="20" max="1000" step="20" value="300">
+      </div>
+
+      <button class="btn-run" id="run-btn">Simulate</button>
+    </div>
+
+    <div class="stats-summary" id="stats-output">
+      Running simulation...
+    </div>
+
+    <div class="charts-wrapper">
+      <div class="canvas-box">
+        <span>Sample Trajectories (Step 1 to <em>n</em>)</span>
+        <canvas id="traj-canvas" width="520" height="360"></canvas>
+      </div>
+      <div class="canvas-box">
+        <span>Terminal Distribution at Step <em>n</em> (with Normal fit)</span>
+        <canvas id="hist-canvas" width="320" height="360"></canvas>
+      </div>
+    </div>
+
+    <!-- SECTION 3: SCALING COMPARISON & VARIANCE -->
+    <h2>3. Asymptotic Behavior and Variance Analysis</h2>
+    <p>
+      Let <em>S<sub>n</sub> = &sum;<sub>i=1</sub><sup>n</sup> X<sub>i</sub></em> be the aggregate score after <em>n</em> steps, where increments have mean <em>&mu;</em> and variance <em>&sigma;<sup>2</sup></em>. By applying linearity of expectation and the properties of variance for independent variables (<em>Var(aY) = a<sup>2</sup>Var(Y)</em>), we obtain distinct asymptotic regimes as <em>n &rarr; &infin;</em>:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Quantity</th>
+          <th>Expected Value <em>E[&middot;]</em></th>
+          <th>Variance <em>Var(&middot;)</em></th>
+          <th>Behavior as <em>n &rarr; &infin;</em></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong class="highlight">Total Score:</strong> <em>S<sub>n</sub></em></td>
+          <td><em>n &middot; &mu;</em></td>
+          <td><em>n &middot; &sigma;<sup>2</sup></em></td>
+          <td>Variance diverges to <em>&infin;</em>. The spread of trajectories widens proportionally to <em>&radic;n</em>.</td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">Average Score:</strong> <em>S<sub>n</sub> / n</em></td>
+          <td><em>&mu;</em></td>
+          <td><em>&sigma;<sup>2</sup> / n</em></td>
+          <td>Variance collapses to <em>0</em>. Converges in probability to the constant <em>&mu;</em> (<strong class="highlight">Law of Large Numbers</strong>).</td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">Normalized Score:</strong> <em>S<sub>n</sub> / &radic;n</em></td>
+          <td><em>&radic;n &middot; &mu;</em> (<em>0</em> if <em>&mu; = 0</em>)</td>
+          <td><em>&sigma;<sup>2</sup></em></td>
+          <td>Variance stabilizes at a constant <em>&sigma;<sup>2</sup></em>. For zero-mean processes, converges in distribution to <em>N(0, &sigma;<sup>2</sup>)</em> (<strong class="highlight">Central Limit Theorem</strong>).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Law of Large Numbers (Convergence in Probability of <em>S<sub>n</sub> / n</em>)</h3>
+    <p>
+      When selecting <code>Average Score: S_n / n</code> in the simulator and increasing <em>n</em> to 1000, the variance <em>&sigma;<sup>2</sup> / n</em> approaches zero. Visually, all
