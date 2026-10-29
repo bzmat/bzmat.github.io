@@ -319,4 +319,295 @@
 
     <h3>Law of Large Numbers (Convergence in Probability of <em>S<sub>n</sub> / n</em>)</h3>
     <p>
-      When selecting <code>Average Score: S_n / n</code> in the simulator and increasing <em>n</em> to 1000, the variance <em>&sigma;<sup>2</sup> / n</em> approaches zero. Visually, all
+      When selecting <code>Average Score: S_n / n</code> in the simulator and increasing <em>n</em> to 1000, the variance <em>&sigma;<sup>2</sup> / n</em> approaches zero. Visually, all attacker trajectories compress into a tight tube that converges toward the theoretical mean <em>&mu;</em> (<em>0.5</em> for standard Bernoulli, <em>0</em> for Rademacher), leaving the terminal histogram as a single sharp spike (degenerate distribution).
+    </p>
+
+    <h3>Central Limit Theorem (Convergence in Distribution of <em>S<sub>n</sub> / &radic;n</em>)</h3>
+    <p>
+      Dividing by <em>n</em> crushes the random fluctuations entirely, whereas not dividing at all (<em>S<sub>n</sub></em>) lets the fluctuations grow unboundedly. Scaling by <em>1 / &radic;n</em> is the exact mathematical threshold that keeps the variance constant at <em>Var(S<sub>n</sub> / &radic;n) = (1/n) &middot; n&sigma;<sup>2</sup> = &sigma;<sup>2</sup></em>.
+    </p>
+    <p>
+      In the <span class="highlight">Rademacher case</span> (where <em>&mu; = 0</em> and <em>&sigma;<sup>2</sup> = 1</em>), the quantity <em>S<sub>n</sub> / &radic;n</em> has mean <em>0</em> and variance <em>1</em> for every <em>n</em>. By the Central Limit Theorem, as <em>n</em> grows large, the discrete binomial-like steps smooth out and converge in distribution to the <span class="highlight">Standard Normal Distribution <em>N(0, 1)</em></span>, as shown by the orange bell curve matching the empirical histogram in the simulator. (Note: For the Bernoulli model where <em>&mu; = p &gt; 0</em>, <em>S<sub>n</sub> / &radic;n</em> has stable variance <em>p(1&minus;p)</em>, but its center drifts rightward at speed <em>&radic;n &middot; p</em> unless centered as <em>(S<sub>n</sub> &minus; np) / &radic;n</em>).
+    </p>
+
+    <!-- SECTION 4: SECURITY INTERPRETATION -->
+    <h2>4. Interpretation in the Context of <em>n</em> Systems and <em>m</em> Attackers</h2>
+    <ul>
+      <li>
+        <strong class="highlight">Role of System Size (<em>n</em>):</strong> The parameter <em>n</em> represents the depth of the infrastructure (e.g., number of defense layers, microservices, or sequential vulnerabilities). A larger <em>n</em> makes the <em>average penetration rate</em> (<em>S<sub>n</sub> / n</em>) highly predictable for defenders due to the Law of Large Numbers: random lucky streaks by an attacker are averaged out across many systems. However, the <em>absolute uncertainty</em> (standard deviation of total compromised assets <em>S<sub>n</sub></em>) still grows at rate <em>&radic;n</em>.
+      </li>
+      <li>
+        <strong class="highlight">Role of the Number of Attackers (<em>m</em>):</strong> Each attacker represents an independent realization (sample trajectory) of the stochastic process. If <em>m</em> is very small (e.g., 1 or 2 attackers), the defender only observes isolated random paths and cannot reliably estimate the true vulnerability parameter <em>p</em>. As <em>m</em> increases (a massive botnet or concurrent threat actors), the empirical distribution across attackers accurately reconstructs the theoretical probability distribution. Furthermore, a larger <em>m</em> increases the <span class="highlight">extreme value risk</span>: with hundreds of attackers operating concurrently, the probability that at least one trajectory reaches the upper tail of the normal distribution (a severe multi-system breach) becomes near-certain.
+      </li>
+    </ul>
+
+    <a href="index.html" class="back-link">&larr; Back to Homework list</a>
+  </div>
+
+  <!-- SIMULATION & PLOTTING SCRIPT -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const modelSelect = document.getElementById("model-select");
+      const scaleSelect = document.getElementById("scale-select");
+      const nInput = document.getElementById("n-input");
+      const mInput = document.getElementById("m-input");
+      const nVal = document.getElementById("n-val");
+      const mVal = document.getElementById("m-val");
+      const runBtn = document.getElementById("run-btn");
+      const statsOutput = document.getElementById("stats-output");
+
+      const trajCanvas = document.getElementById("traj-canvas");
+      const trajCtx = trajCanvas.getContext("2d");
+      const histCanvas = document.getElementById("hist-canvas");
+      const histCtx = histCanvas.getContext("2d");
+
+      function updateLabels() {
+        nVal.textContent = nInput.value;
+        mVal.textContent = mInput.value;
+      }
+
+      nInput.addEventListener("input", () => { updateLabels(); runSimulation(); });
+      mInput.addEventListener("input", () => { updateLabels(); runSimulation(); });
+      modelSelect.addEventListener("change", runSimulation);
+      scaleSelect.addEventListener("change", runSimulation);
+      runBtn.addEventListener("click", runSimulation);
+
+      function runSimulation() {
+        const n = parseInt(nInput.value, 10);
+        const m = parseInt(mInput.value, 10);
+        const model = modelSelect.value;
+        const scaleMode = scaleSelect.value;
+
+        // Theoretical parameters of single increment X_i
+        let mu = 0, sigma2 = 1;
+        if (model === "bernoulli") {
+          mu = 0.5; sigma2 = 0.25;
+        } else if (model === "bernoulli_biased") {
+          mu = 0.7; sigma2 = 0.7 * 0.3;
+        } else {
+          mu = 0; sigma2 = 1; // Rademacher
+        }
+
+        const trajectories = [];
+        const finalValues = [];
+        let globalMin = Infinity;
+        let globalMax = -Infinity;
+
+        // Simulate m trajectories of length n
+        for (let attacker = 0; attacker < m; attacker++) {
+          const path = [0];
+          let sum = 0;
+
+          for (let step = 1; step <= n; step++) {
+            let x = 0;
+            if (model === "rademacher") {
+              x = Math.random() < 0.5 ? -1 : 1;
+            } else if (model === "bernoulli") {
+              x = Math.random() < 0.5 ? 1 : 0;
+            } else {
+              x = Math.random() < 0.7 ? 1 : 0;
+            }
+            sum += x;
+
+            let val = sum;
+            if (scaleMode === "average") {
+              val = sum / step;
+            } else if (scaleMode === "normalized") {
+              val = sum / Math.sqrt(step);
+            }
+
+            path.push(val);
+            if (val < globalMin) globalMin = val;
+            if (val > globalMax) globalMax = val;
+          }
+          trajectories.push(path);
+          finalValues.push(path[n]);
+        }
+
+        // Empirical mean and variance at terminal step n
+        const empMean = finalValues.reduce((a, b) => a + b, 0) / m;
+        const empVar = finalValues.reduce((a, b) => a + Math.pow(b - empMean, 2), 0) / m;
+
+        // Theoretical mean and variance at terminal step n
+        let theoMean = n * mu;
+        let theoVar = n * sigma2;
+        if (scaleMode === "average") {
+          theoMean = mu;
+          theoVar = sigma2 / n;
+        } else if (scaleMode === "normalized") {
+          theoMean = Math.sqrt(n) * mu;
+          theoVar = sigma2;
+        }
+
+        // Update stats summary box
+        statsOutput.innerHTML = 
+          `<span class="highlight">Terminal Step (n = ${n}, m = ${m}):</span> ` +
+          `Empirical Mean = <strong>${empMean.toFixed(4)}</strong> (Theoretical: ${theoMean.toFixed(4)}) | ` +
+          `Empirical Variance = <strong>${empVar.toFixed(4)}</strong> (Theoretical: ${theoVar.toFixed(4)})`;
+
+        // Ensure symmetric/clean padding on Y axis
+        if (globalMin === globalMax) {
+          globalMin -= 1;
+          globalMax += 1;
+        }
+        const yMargin = (globalMax - globalMin) * 0.1;
+        const yMin = globalMin - yMargin;
+        const yMax = globalMax + yMargin;
+
+        drawTrajectories(trajectories, n, yMin, yMax, theoMean, scaleMode, mu);
+        drawHistogram(finalValues, yMin, yMax, theoMean, theoVar);
+      }
+
+      function drawTrajectories(trajectories, n, yMin, yMax, theoMean, scaleMode, mu) {
+        const w = trajCanvas.width;
+        const h = trajCanvas.height;
+        const padLeft = 45, padRight = 15, padTop = 15, padBottom = 30;
+        const plotW = w - padLeft - padRight;
+        const plotH = h - padTop - padBottom;
+
+        trajCtx.clearRect(0, 0, w, h);
+
+        const mapX = (step) => padLeft + (step / n) * plotW;
+        const mapY = (val) => padTop + plotH - ((val - yMin) / (yMax - yMin)) * plotH;
+
+        // Draw horizontal grid lines and Y labels
+        trajCtx.strokeStyle = "#2a2a2a";
+        trajCtx.fillStyle = "#888";
+        trajCtx.font = "11px monospace";
+        trajCtx.textAlign = "right";
+        trajCtx.textBaseline = "middle";
+
+        const gridSteps = 5;
+        for (let i = 0; i <= gridSteps; i++) {
+          const val = yMin + (i / gridSteps) * (yMax - yMin);
+          const py = mapY(val);
+          trajCtx.beginPath();
+          trajCtx.moveTo(padLeft, py);
+          trajCtx.lineTo(w - padRight, py);
+          trajCtx.stroke();
+          trajCtx.fillText(val.toFixed(1), padLeft - 6, py);
+        }
+
+        // X Axis labels
+        trajCtx.textAlign = "center";
+        trajCtx.fillText("0", padLeft, h - 10);
+        trajCtx.fillText(`n = ${n}`, w - padRight - 15, h - 10);
+
+        // Draw sample trajectories (limit rendered lines to 120 for performance/clarity)
+        const maxLines = Math.min(trajectories.length, 120);
+        trajCtx.lineWidth = 1;
+        for (let i = 0; i < maxLines; i++) {
+          // Highlight the first trajectory in bright orange, others in translucent cyan/orange
+          if (i === 0) {
+            trajCtx.strokeStyle = "#ff9800";
+            trajCtx.lineWidth = 2;
+          } else {
+            trajCtx.strokeStyle = "rgba(0, 188, 212, 0.18)";
+            trajCtx.lineWidth = 1;
+          }
+
+          const path = trajectories[i];
+          trajCtx.beginPath();
+          for (let step = 0; step <= n; step++) {
+            const px = mapX(step);
+            const py = mapY(path[step]);
+            if (step === 0) trajCtx.moveTo(px, py);
+            else trajCtx.lineTo(px, py);
+          }
+          trajCtx.stroke();
+        }
+
+        // Draw theoretical expectation curve (dashed white line)
+        trajCtx.strokeStyle = "#ffffff";
+        trajCtx.lineWidth = 1.5;
+        trajCtx.setLineDash([5, 5]);
+        trajCtx.beginPath();
+        for (let step = 1; step <= n; step++) {
+          let expVal = step * mu;
+          if (scaleMode === "average") expVal = mu;
+          else if (scaleMode === "normalized") expVal = Math.sqrt(step) * mu;
+          const px = mapX(step);
+          const py = mapY(expVal);
+          if (step === 1) trajCtx.moveTo(px, py);
+          else trajCtx.lineTo(px, py);
+        }
+        trajCtx.stroke();
+        trajCtx.setLineDash([]);
+      }
+
+      function drawHistogram(finalValues, yMin, yMax, theoMean, theoVar) {
+        const w = histCanvas.width;
+        const h = histCanvas.height;
+        const padLeft = 15, padRight = 25, padTop = 15, padBottom = 30;
+        const plotW = w - padLeft - padRight;
+        const plotH = h - padTop - padBottom;
+
+        histCtx.clearRect(0, 0, w, h);
+
+        const mapY = (val) => padTop + plotH - ((val - yMin) / (yMax - yMin)) * plotH;
+
+        // Build horizontal histogram aligned with the trajectory Y-axis
+        const numBins = 24;
+        const binWidth = (yMax - yMin) / numBins;
+        const bins = new Array(numBins).fill(0);
+
+        finalValues.forEach(v => {
+          let idx = Math.floor((v - yMin) / binWidth);
+          if (idx < 0) idx = 0;
+          if (idx >= numBins) idx = numBins - 1;
+          bins[idx]++;
+        });
+
+        // Convert counts to probability density so it matches the Normal PDF scale
+        const m = finalValues.length;
+        const densities = bins.map(count => count / (m * binWidth));
+        const maxDensity = Math.max(...densities, 1 / Math.sqrt(2 * Math.PI * Math.max(theoVar, 0.001)));
+
+        // Draw bars
+        histCtx.fillStyle = "rgba(0, 188, 212, 0.45)";
+        histCtx.strokeStyle = "#00bcd4";
+        histCtx.lineWidth = 1;
+
+        for (let i = 0; i < numBins; i++) {
+          const valStart = yMin + i * binWidth;
+          const valEnd = valStart + binWidth;
+          const pyTop = mapY(valEnd);
+          const pyBottom = mapY(valStart);
+          const barH = Math.max(1, pyBottom - pyTop - 1);
+          const barW = (densities[i] / maxDensity) * (plotW * 0.85);
+
+          histCtx.fillRect(padLeft, pyTop, barW, barH);
+          histCtx.strokeRect(padLeft, pyTop, barW, barH);
+        }
+
+        // Overlay Theoretical Normal PDF curve (CLT approximation)
+        if (theoVar > 1e-6) {
+          histCtx.strokeStyle = "#ff9800";
+          histCtx.lineWidth = 2.5;
+          histCtx.beginPath();
+
+          const steps = 100;
+          for (let i = 0; i <= steps; i++) {
+            const yVal = yMin + (i / steps) * (yMax - yMin);
+            const pdf = (1 / Math.sqrt(2 * Math.PI * theoVar)) * Math.exp(-Math.pow(yVal - theoMean, 2) / (2 * theoVar));
+            const px = padLeft + (pdf / maxDensity) * (plotW * 0.85);
+            const py = mapY(yVal);
+            if (i === 0) histCtx.moveTo(px, py);
+            else histCtx.lineTo(px, py);
+          }
+          histCtx.stroke();
+        }
+
+        // Legend at bottom
+        histCtx.fillStyle = "#ff9800";
+        histCtx.font = "11px monospace";
+        histCtx.textAlign = "left";
+        histCtx.fillText("— Normal PDF (CLT)", padLeft, h - 10);
+      }
+
+      // Initial run on page load
+      runSimulation();
+    });
+  </script>
+</body>
+</html>
