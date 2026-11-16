@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework - Welford's Method & Sampling</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background-color: #121212;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.6em;
+      color: #ffffff;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-top: 50px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 1.2em;
+      color: #ff9800;
+      margin-top: 25px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-bottom: 20px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #ff9800;
+    }
+
+    .interactive-panel {
+      background-color: #2d2d2d;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      display: inline-block;
+      margin-right: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.9em;
+      color: #bbb;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .input-group input {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border: 1px solid #555;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 100px;
+    }
+
+    pre {
+      background-color: #161616;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      line-height: 1.5;
+    }
+
+    .btn-run {
+      background-color: #ff9800;
+      color: #121212;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .btn-run:hover {
+      background-color: #e68a00;
+    }
+
+    .results-box {
+      border-left: 4px solid #ff9800;
+      padding-left: 15px;
+      background: rgba(255, 152, 0, 0.05);
+      padding: 15px;
+      border-radius: 0 6px 6px 0;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #ff9800;
+      color: #121212;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .back-link:hover {
+      background-color: #e68a00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Homework: Welford's Method & Sampling</h1>
+
+    <!-- SUMMARY SECTION -->
+    <section class="text-content">
+      <h2>Work Done</h2>
+      <p>
+        This project derives and implements <span class="highlight">Welford's online algorithm</span> for computing running sample variances, demonstrating its numerical stability over standard naive methods. I extended the previous stochastic penetration model by simulating <span class="highlight"><em>m</em> hackers</span> attacking <span class="highlight"><em>n</em> systems</span> with scores drawn from a continuous uniform distribution. By aggregating the sample means and sample variances across all attackers, I empirically validate the properties of <span class="highlight">unbiased estimators</span> and discuss the effect of sample size on estimator variability in inferential statistics.
+      </p>
+    </section>
+
+    <!-- EX 1 -->
+    <section class="text-content">
+      <h2>Ex. 1 &ndash; Welford's Recurrence Formulas</h2>
+      
+      <h3>Derivation</h3>
+      <p>
+        Let <em>M<sub>k</sub></em> be the mean of the first <em>k</em> samples, and <em>S<sub>k</sub></em> be the sum of squared differences from the mean: <em>S<sub>k</sub> = &sum;<sub>i=1</sub><sup>k</sup> (x<sub>i</sub> - M<sub>k</sub>)<sup>2</sup></em>.
+      </p>
+      <p>
+        Knuth's formula for the running mean is:<br>
+        <em>M<sub>k</sub> = M<sub>k-1</sub> + (x<sub>k</sub> - M<sub>k-1</sub>) / k</em>
+      </p>
+      <p>
+        To derive the recurrence for <em>S<sub>k</sub></em>, we expand the squared differences for <em>k</em> terms, substituting <em>M<sub>k</sub></em> with its recursive definition. A well-known algebraic reduction leads to the elegant formula:<br>
+        <em>S<sub>k</sub> = S<sub>k-1</sub> + (x<sub>k</sub> - M<sub>k-1</sub>)(x<sub>k</sub> - M<sub>k</sub>)</em>
+      </p>
+      <p>
+        The sample variance is then simply the sum of squares divided by Bessel's correction factor:<br>
+        <em>s<sup>2</sup> = S<sub>k</sub> / (k - 1)</em>
+      </p>
+
+      <h3>Code Implementation</h3>
+      <p>The core logic implemented in JavaScript requires only a few lines to update the mean and the sum of squares (M2) iteratively:</p>
+      <pre><code>let delta = x - mean;
+mean += delta / k;
+M2 += delta * (x - mean); 
+// Sample Variance = M2 / (k - 1)</code></pre>
+    </section>
+
+    <!-- EX 2 -->
+    <section class="text-content">
+      <h2>Ex. 2 &ndash; Sampling Mean and Variance</h2>
+      
+      <h3>Distribution Setup</h3>
+      <p>
+        We model the penetration score <em>X</em> using a <strong class="highlight">Continuous Uniform Distribution</strong> on the interval [0, 10].
+      </p>
+      <ul>
+        <li>Theoretical Mean (&mu;): <em>(0 + 10) / 2 = 5.00</em></li>
+        <li>Theoretical Variance (&sigma;<sup>2</sup>): <em>(10 - 0)<sup>2</sup> / 12 &approx; 8.3333</em></li>
+      </ul>
+
+      <h3>Interactive Simulation</h3>
+      <div class="interactive-panel">
+        <div class="input-group">
+          <label for="m-input">Hackers (<em>m</em>):</label>
+          <input type="number" id="m-input" value="1000" min="10">
+        </div>
+        <div class="input-group">
+          <label for="n-input">Systems (<em>n</em>):</label>
+          <input type="number" id="n-input" value="50" min="2">
+        </div>
+        <button class="btn-run" id="btn-run-sim">Run Simulation</button>
+        <div class="results-box" id="sim-results">Awaiting execution...</div>
+      </div>
+
+      <h3>Statistical Conclusions</h3>
+      <p>
+        Based on the empirical results generated above, several fundamental principles of inferential statistics become evident:
+      </p>
+      <ol>
+        <li><strong class="highlight">Unbiased Estimators:</strong> The average of the sample means closely approximates the theoretical mean (&mu; = 5). Similarly, the average of the sample variances (using Bessel's correction, divided by <em>n-1</em>) converges to the theoretical variance (&sigma;<sup>2</sup> &approx; 8.33). This proves that Welford's variance calculation provides an unbiased estimator of the population variance.</li>
+        <li><strong class="highlight">Effect of Increasing <em>n</em> (Sample Size):</strong> As you increase the number of systems (<em>n</em>), the individual sample means computed by each hacker cluster much more tightly around 5.0. Mathematically, the variance of the sampling distribution of the mean is <em>&sigma;<sup>2</sup> / n</em>. A larger <em>n</em> directly reduces this variability, meaning any single hacker's average score becomes a highly reliable estimate of the system's true vulnerability.</li>
+        <li><strong class="highlight">Usefulness in Inferential Statistics:</strong> In reality, we rarely know the theoretical &mu; and &sigma;<sup>2</sup>. We only have one hacker's trajectory (one sample of size <em>n</em>). Because we know the sample mean and sample variance are unbiased, and because we know their variability shrinks as <em>n</em> grows, we can confidently construct <strong class="highlight">Confidence Intervals</strong> to estimate the true parameters of the underlying population from a single limited sample.</li>
+      </ol>
+    </section>
+
+    <a href="index.html" class="back-link">&larr; Back to Homework list</a>
+  </div>
+
+  <!-- JAVASCRIPT SIMULATION LOGIC -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const btnRun = document.getElementById("btn-run-sim");
+      const mInput = document.getElementById("m-input");
+      const nInput = document.getElementById("n-input");
+      const resBox = document.getElementById("sim-results");
+
+      // Continuous Uniform Distribution [0, 10]
+      const THEO_MEAN = 5.0;
+      const THEO_VAR = 100 / 12; // 8.3333...
+
+      // Function to generate a random score [0, 10]
+      function getScore() {
+        return Math.random() * 10;
+      }
+
+      function runSimulation() {
+        const m = parseInt(mInput.value, 10);
+        const n = parseInt(nInput.value, 10);
+
+        if (isNaN(m) || isNaN(n) || m < 1 || n < 2) {
+          resBox.innerHTML = '<span style="color:#ff5555;">Please enter valid numbers (m >= 1, n >= 2).</span>';
+          return;
+        }
+
+        let sumOfSampleMeans = 0;
+        let sumOfSampleVars = 0;
+
+        // Loop through each hacker
+        for (let i = 0; i < m; i++) {
+          
+          // Welford's Algorithm Initial State
+          let mean = 0;
+          let M2 = 0;
+
+          // Process n systems for this hacker
+          for (let k = 1; k <= n; k++) {
+            const x = getScore();
+            
+            // Welford's Core Logic (3 lines)
+            let delta = x - mean;
+            mean += delta / k;
+            M2 += delta * (x - mean);
+          }
+
+          const sampleVar = M2 / (n - 1); // Sample variance
+
+          sumOfSampleMeans += mean;
+          sumOfSampleVars += sampleVar;
+        }
+
+        // Averages across all m hackers
+        const avgSampleMean = sumOfSampleMeans / m;
+        const avgSampleVar = sumOfSampleVars / m;
+
+        // Compute error margins
+        const meanError = Math.abs(avgSampleMean - THEO_MEAN);
+        const varError = Math.abs(avgSampleVar - THEO_VAR);
+
+        // Display results
+        resBox.innerHTML = 
+          `Simulation Results for m = ${m} hackers, n = ${n} systems\n\n` +
+          `[THEORETICAL PARAMETERS]\n` +
+          `Theoretical Mean (μ)     : ${THEO_MEAN.toFixed(4)}\n` +
+          `Theoretical Var (σ²)     : ${THEO_VAR.toFixed(4)}\n\n` +
+          `[EMPIRICAL AVERAGES ACROSS ${m} HACKERS]\n` +
+          `Avg of Sample Means      : <span class="highlight">${avgSampleMean.toFixed(4)}</span> (Absolute Error: ${meanError.toFixed(4)})\n` +
+          `Avg of Sample Variances  : <span class="highlight">${avgSampleVar.toFixed(4)}</span> (Absolute Error: ${varError.toFixed(4)})\n\n` +
+          `Note: Try increasing 'n' to see the empirical values converge even closer to the theoretical expectations.`;
+      }
+
+      btnRun.addEventListener("click", runSimulation);
+      
+      // Run once on load
+      runSimulation();
+    });
+  </script>
+</body>
+</html>
