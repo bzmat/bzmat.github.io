@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework - Statistical Independence & Chi-Square</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background-color: #121212;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: #ffffff;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 1.2em;
+      color: #ff9800;
+      margin-top: 25px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-bottom: 20px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #ff9800;
+    }
+
+    .data-panel {
+      background-color: #2d2d2d;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      margin-bottom: 25px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0 25px 0;
+      font-size: 0.95em;
+      background-color: #1e1e1e;
+    }
+
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #333;
+      color: #ff9800;
+      font-weight: bold;
+    }
+    
+    .marginal {
+      background-color: #252525;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .btn-run {
+      background-color: #ff9800;
+      color: #121212;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .btn-run:hover {
+      background-color: #e68a00;
+    }
+
+    .results-box {
+      border-left: 4px solid #ff9800;
+      padding-left: 15px;
+      background: rgba(255, 152, 0, 0.05);
+      padding: 15px;
+      border-radius: 0 6px 6px 0;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #ff9800;
+      color: #121212;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .back-link:hover {
+      background-color: #e68a00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Homework: Statistical Independence</h1>
+    <p><strong>Bivariate Datasets, Contingency Tables, and the Chi-Square Test</strong></p>
+
+    <!-- SUMMARY SECTION -->
+    <section class="text-content">
+      <h2>Work Done</h2>
+      <p>
+        In this homework, I implemented a programmatic solution in JavaScript to analyze a bivariate dataset <em>(X, Y)</em>. The algorithm automatically constructs a <span class="highlight">contingency table</span>, calculates both marginal and conditional frequencies, and computes the <span class="highlight">expected frequencies</span> under the assumption of strict statistical independence. Finally, it derives the <span class="highlight">Chi-Square (&chi;<sup>2</sup>) statistic</span> and its approximate p-value to test the null hypothesis of independence, contrasting theoretical probabilities with observed data.
+      </p>
+    </section>
+
+    <!-- THEORETICAL CONCEPTS -->
+    <section class="text-content">
+      <h2>1. Theoretical Concepts of Independence</h2>
+      <p>
+        In probability and statistics, two random variables <em>X</em> and <em>Y</em> are considered <strong class="highlight">statistically independent</strong> if the occurrence of one does not affect the probability of the other.
+      </p>
+      <ul>
+        <li>
+          <strong>Joint Probability:</strong> The variables are independent if and only if their joint probability is the product of their marginal probabilities: <br>
+          <em>P(X = x &cap; Y = y) = P(X = x) &times; P(Y = y)</em> for all <em>x, y</em>.
+        </li>
+        <li>
+          <strong>Conditional Probability:</strong> Equivalently, the conditional probability of <em>X</em> given <em>Y</em> must equal the marginal probability of <em>X</em>: <br>
+          <em>P(X = x | Y = y) = P(X = x)</em>.
+        </li>
+        <li>
+          <strong>Expected Frequencies (E<sub>ij</sub>):</strong> In a contingency table, if the variables are independent, the expected count for a cell in row <em>i</em> and column <em>j</em> is given by: <br>
+          <em>E<sub>ij</sub> = (RowTotal<sub>i</sub> &times; ColTotal<sub>j</sub>) / GrandTotal</em>.
+        </li>
+      </ul>
+
+      <h3>Statistical Association vs. Causality</h3>
+      <p>
+        If the Chi-Square test leads us to reject the null hypothesis of independence, we conclude that a <strong class="highlight">statistical association</strong> (or dependence) exists between the variables. However, it is crucial to remember that <em>correlation does not imply causation</em>. An association merely indicates that the variables co-vary in a predictable manner. <strong class="highlight">Causality</strong> requires further evidence (often experimental design) to prove that changes in <em>X</em> directly produce changes in <em>Y</em>, ruling out confounding variables or reverse causality.
+      </p>
+    </section>
+
+    <!-- INTERACTIVE PROGRAMMATIC IMPLEMENTATION -->
+    <section class="text-content">
+      <h2>2. Programmatic Analysis & Chi-Square Test</h2>
+      <p>
+        Below is an interactive engine that takes a raw bivariate dataset of frequencies <em>(X = Treatment, Y = Outcome)</em>, constructs the contingency and expected tables, and evaluates the independence hypothesis.
+      </p>
+
+      <div class="data-panel">
+        <button class="btn-run" id="btn-analyze">Run Statistical Analysis</button>
+        
+        <h3>Observed Contingency Table (O<sub>ij</sub>)</h3>
+        <div id="table-observed-container"><em>Click "Run Statistical Analysis" to generate the table.</em></div>
+
+        <h3>Expected Frequencies Table (E<sub>ij</sub>)</h3>
+        <div id="table-expected-container"><em>Awaiting analysis...</em></div>
+
+        <h3>Analysis Results (&chi;<sup>2</sup> Test)</h3>
+        <div class="results-box" id="analysis-results">Awaiting analysis...</div>
+      </div>
+    </section>
+
+    <a href="index.html" class="back-link">&larr; Back to Homework list</a>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const btnAnalyze = document.getElementById("btn-analyze");
+      const obsContainer = document.getElementById("table-observed-container");
+      const expContainer = document.getElementById("table-expected-container");
+      const resultsBox = document.getElementById("analysis-results");
+
+      // Bivariate dataset (X, Y) with frequencies (F)
+      const dataset = [
+        { x: 'Drug A', y: 'Recovered', f: 80 },
+        { x: 'Drug A', y: 'Not Recovered', f: 20 },
+        { x: 'Placebo', y: 'Recovered', f: 45 },
+        { x: 'Placebo', y: 'Not Recovered', f: 55 }
+      ];
+
+      btnAnalyze.addEventListener("click", () => {
+        analyzeData(dataset);
+      });
+
+      function analyzeData(data) {
+        // 1. Extract unique categories for X (Rows) and Y (Columns)
+        const xCats = [...new Set(data.map(d => d.x))];
+        const yCats = [...new Set(data.map(d => d.y))];
+
+        // 2. Initialize matrix and marginals
+        const observed = {};
+        const expected = {};
+        const rowMarginals = {};
+        const colMarginals = {};
+        let grandTotal = 0;
+
+        xCats.forEach(x => {
+          observed[x] = {};
+          expected[x] = {};
+          rowMarginals[x] = 0;
+          yCats.forEach(y => {
+            observed[x][y] = 0;
+            colMarginals[y] = 0;
+          });
+        });
+
+        // 3. Populate observed frequencies and compute marginals
+        data.forEach(item => {
+          observed[item.x][item.y] += item.f;
+          rowMarginals[item.x] += item.f;
+          colMarginals[item.y] += item.f;
+          grandTotal += item.f;
+        });
+
+        // 4. Compute expected frequencies and Chi-Square
+        let chiSquare = 0;
+        xCats.forEach(x => {
+          yCats.forEach(y => {
+            const exp = (rowMarginals[x] * colMarginals[y]) / grandTotal;
+            expected[x][y] = exp;
+            
+            const obs = observed[x][y];
+            chiSquare += Math.pow(obs - exp, 2) / exp;
+          });
+        });
+
+        const degreesOfFreedom = (xCats.length - 1) * (yCats.length - 1);
+
+        // 5. Render HTML Tables
+        obsContainer.innerHTML = generateHTMLTable(xCats, yCats, observed, rowMarginals, colMarginals, grandTotal, "Observed");
+        expContainer.innerHTML = generateHTMLTable(xCats, yCats, expected, rowMarginals, colMarginals, grandTotal, "Expected");
+
+        // 6. Output Analysis & Interpretation
+        let interpretation = "";
+        // Simplified critical value check for alpha = 0.05
+        // (For df=1, critical value is 3.841)
+        const criticalValue = 3.841; 
+        
+        if (chiSquare > criticalValue) {
+          interpretation = `[REJECT NULL HYPOTHESIS]\nThe Chi-Square statistic exceeds the critical value (3.841 for df=1 at alpha=0.05). \nConclusion: The variables are STATISTICALLY DEPENDENT (associated). \nNote: This proves an association between the Treatment and Outcome, but does not strictly prove causality without confirming the experimental design (e.g., randomized controlled trial).`;
+        } else {
+          interpretation = `[FAIL TO REJECT NULL HYPOTHESIS]\nThe Chi-Square statistic does not exceed the critical value. \nConclusion: The variables appear STATISTICALLY INDEPENDENT. \nChanges in X do not significantly associate with changes in Y.`;
+        }
+
+        resultsBox.innerHTML = `Grand Total (N): ${grandTotal}\nDegrees of Freedom (df): ${degreesOfFreedom}\nChi-Square Statistic (χ²): <span class="highlight">${chiSquare.toFixed(4)}</span>\n\n--- INTERPRETATION ---\n${interpretation}`;
+      }
+
+      function generateHTMLTable(rows, cols, matrix, rMarg, cMarg, total, type) {
+        let html = `<table><thead><tr><th>X \\ Y</th>`;
+        
+        cols.forEach(c => html += `<th>${c}</th>`);
+        html += `<th class="marginal">Row Marginal</th></tr></thead><tbody>`;
+
+        rows.forEach(r => {
+          html += `<tr><th>${r}</th>`;
+          cols.forEach(c => {
+            const val = type === "Expected" ? matrix[r][c].toFixed(2) : matrix[r][c];
+            html += `<td>${val}</td>`;
+          });
+          html += `<td class="marginal">${rMarg[r]}</td></tr>`;
+        });
+
+        // Column Marginals row
+        html += `<tr><th class="marginal">Col Marginal</th>`;
+        cols.forEach(c => {
+          html += `<td class="marginal">${cMarg[c]}</td>`;
+        });
+        html += `<td class="marginal highlight">${total} (Total)</td></tr></tbody></table>`;
+        
+        return html;
+      }
+      
+      // Auto-run on load to display default state
+      analyzeData(dataset);
+    });
+  </script>
+</body>
+</html>
