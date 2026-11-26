@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework - Modes of Convergence &amp; Bayesian Inference</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background-color: #121212;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+    }
+
+    h1 {
+      font-size: 2.1em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.55em;
+      color: #ffffff;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-top: 45px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 1.2em;
+      color: #ff9800;
+      margin-top: 25px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-bottom: 20px;
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #ff9800;
+    }
+
+    .formula-box {
+      background-color: #252525;
+      border-left: 4px solid #ff9800;
+      padding: 14px 18px;
+      margin: 18px 0;
+      border-radius: 0 6px 6px 0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 15px;
+      color: #ffffff;
+      overflow-x: auto;
+    }
+
+    .diagram-box {
+      text-align: center;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      color: #ff9800;
+      background-color: rgba(255, 152, 0, 0.05);
+      border: 1px dashed #ff9800;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 25px 0;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0 25px 0;
+      font-size: 0.94em;
+      background-color: #1e1e1e;
+    }
+
+    th, td {
+      border: 1px solid #444;
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #2d2d2d;
+      color: #ff9800;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #242424;
+    }
+
+    .interactive-panel {
+      background-color: #2d2d2d;
+      padding: 22px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      margin: 25px 0;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .control-group label {
+      font-size: 0.88em;
+      color: #ccc;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .control-group input[type="range"] {
+      accent-color: #ff9800;
+      cursor: pointer;
+    }
+
+    .control-group input[type="number"] {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border: 1px solid #555;
+      padding: 7px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .results-box {
+      border-left: 4px solid #ff9800;
+      background: rgba(255, 152, 0, 0.06);
+      padding: 15px;
+      border-radius: 0 6px 6px 0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin-top: 15px;
+    }
+
+    .canvas-wrapper {
+      background-color: #161616;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 14px;
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background-color: #121212;
+      border-radius: 4px;
+      max-width: 100%;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 10px;
+      font-size: 0.85em;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swatch {
+      width: 14px;
+      height: 4px;
+      display: inline-block;
+    }
+
+    .divider {
+      height: 2px;
+      background: #444;
+      margin: 60px 0;
+      border: none;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #ff9800;
+      color: #121212;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .back-link:hover {
+      background-color: #e68a00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ======================================================
+         HEADER & SUMMARY
+         ====================================================== -->
+    <h1>Homework: Modes of Convergence &amp; Bayesian Inference</h1>
+    <p><strong>Asymptotic Theory, Variance Scaling, and Probabilistic Updating</strong></p>
+
+    <section class="text-content">
+      <h2>Work Done</h2>
+      <p>
+        This study addresses two foundational pillars of probability theory and statistical inference. In the first part, I analyze the four primary <span class="highlight">modes of convergence</span> for sequences of random variables, map their logical hierarchy, connect them to the <span class="highlight">Law of Large Numbers (LLN)</span> and <span class="highlight">Central Limit Theorem (CLT)</span>, and explain mathematically why the <span class="highlight">&radic;n</span> scaling factor emerges from variance additivity under independence. In the second part, I examine <span class="highlight">conditional probability</span> and <span class="highlight">Bayes' Theorem</span>, dissecting the interplay of prior, likelihood, and posterior distributions through two interactive JavaScript simulators: a discrete intrusion-detection diagnostic calculator and a continuous Beta-Binomial Bayesian updater.
+      </p>
+    </section>
+
+    <!-- ======================================================
+         PART 1: MODES OF CONVERGENCE
+         ====================================================== -->
+    <h2>Part 1: Modes of Convergence in Probability Theory</h2>
+
+    <h3>1.1 The Four Main Modes of Convergence</h3>
+    <p>
+      Unlike deterministic real sequences, a sequence of random variables <em>{X<sub>n</sub>}</em> defined on a probability space <em>(&Omega;, F, P)</em> can approach a limiting random variable <em>X</em> in several distinct ways. Each mode captures a different notion of "closeness" between <em>X<sub>n</sub></em> and <em>X</em> as <em>n &rarr; &infin;</em>.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Mode of Convergence</th>
+          <th>Formal Definition (as <em>n &rarr; &infin;</em>)</th>
+          <th>Intuition &amp; Key Role in Statistics</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong class="highlight">Almost Sure (a.s.)</strong><br><em>X<sub>n</sub> &rarr;<sup>a.s.</sup> X</em></td>
+          <td><em>P({&omega; &isin; &Omega; : lim<sub>n&rarr;&infin;</sub> X<sub>n</sub>(&omega;) = X(&omega;)}) = 1</em></td>
+          <td>Pointwise convergence of individual sample trajectories with probability 1. Foundation of the <strong class="highlight">Strong Law of Large Numbers (SLLN)</strong> and strong consistency of estimators.</td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">Mean-Square (L<sup>2</sup>)</strong><br><em>X<sub>n</sub> &rarr;<sup>L&sup2;</sup> X</em></td>
+          <td><em>lim<sub>n&rarr;&infin;</sub> E[(X<sub>n</sub> &minus; X)<sup>2</sup>] = 0</em></td>
+          <td>The average squared error vanishes. Directly corresponds to <strong class="highlight">MSE consistency</strong> of estimators (<em>MSE(&theta;&#770;<sub>n</sub>) = Bias<sup>2</sup> + Var &rarr; 0</em>) and proves the WLLN under finite variance.</td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">In Probability</strong><br><em>X<sub>n</sub> &rarr;<sup>p</sup> X</em></td>
+          <td>For every <em>&epsilon; &gt; 0</em>:<br><em>lim<sub>n&rarr;&infin;</sub> P(|X<sub>n</sub> &minus; X| &gt; &epsilon;) = 0</em></td>
+          <td>The probability of an unusually large deviation at step <em>n</em> shrinks to 0 (though rare spikes may still occur infinitely often along a trajectory). Core of the <strong class="highlight">Weak Law of Large Numbers (WLLN)</strong> and <strong class="highlight">weak consistency</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">In Distribution (Weak)</strong><br><em>X<sub>n</sub> &rarr;<sup>d</sup> X</em></td>
+          <td><em>lim<sub>n&rarr;&infin;</sub> F<sub>X<sub>n</sub></sub>(x) = F<sub>X</sub>(x)</em><br>at every continuity point <em>x</em> of <em>F<sub>X</sub></em></td>
+          <td>Only the cumulative distribution functions (CDFs) converge; <em>X<sub>n</sub></em> and <em>X</em> need not even share the same probability space. Core of the <strong class="highlight">Central Limit Theorem (CLT)</strong> and asymptotic confidence intervals.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>1.2 Implication Hierarchy</h3>
+    <p>
+      These four modes form a strict logical hierarchy. Both almost sure convergence and <em>L<sup>2</sup></em> convergence imply convergence in probability (via Fatou's Lemma / continuity of measure and Markov's / Chebyshev's inequality, respectively), and convergence in probability implies convergence in distribution. However, neither almost sure convergence nor <em>L<sup>2</sup></em> convergence implies the other in general:
+    </p>
+
+    <div class="diagram-box">   Almost Sure (a.s.) ───┐
+                         ├──►  In Probability (p)  ───►  In Distribution (d)
+   Mean-Square (L²)  ────┘            ▲
+                                      │ (Only if limit X = c is a constant)
+                                      └───────────────────────────────────┘</div>
+
+    <ul>
+      <li><strong class="highlight">Why a.s. does not imply L<sup>2</sup>:</strong> A sequence can converge to 0 on every path while taking an increasingly huge value on a vanishingly small event (e.g., <em>X<sub>n</sub> = n</em> with probability <em>1/n<sup>2</sup></em>, 0 otherwise: Borel-Cantelli gives <em>X<sub>n</sub> &rarr;<sup>a.s.</sup> 0</em>, yet <em>E[X<sub>n</sub><sup>2</sup>] = 1 &ne; 0</em>).</li>
+      <li><strong class="highlight">Why L<sup>2</sup> does not imply a.s.:</strong> The "typewriter sequence" (a sliding indicator window of shrinking width <em>1/k</em> sweeping endlessly over [0, 1]) has <em>E[X<sub>n</sub><sup>2</sup>] &rarr; 0</em>, yet every individual point <em>&omega;</em> oscillates between 0 and 1 infinitely often.</li>
+      <li><strong class="highlight">Key Statistical Companion Theorems:</strong> The <strong class="highlight">Continuous Mapping Theorem</strong> preserves a.s., in-probability, and in-distribution convergence through continuous functions <em>g(&middot;)</em>. <strong class="highlight">Slutsky's Theorem</strong> combines convergence in distribution with convergence in probability to a constant (e.g., replacing unknown <em>&sigma;</em> with consistent sample standard deviation <em>S<sub>n</sub></em> in a t-statistic so <em>&radic;n (X&#772;<sub>n</sub> &minus; &mu;) / S<sub>n</sub> &rarr;<sup>d</sup> N(0, 1)</em>).</li>
+    </ul>
+
+    <h3>1.3 Roles in the LLN and CLT</h3>
+    <ul>
+      <li><strong class="highlight">Weak Law of Large Numbers (WLLN):</strong> For i.i.d. random variables with mean <em>&mu;</em>, the sample mean satisfies <em>X&#772;<sub>n</sub> &rarr;<sup>p</sup> &mu;</em>. When variance <em>&sigma;<sup>2</sup> &lt; &infin;</em>, <em>E[(X&#772;<sub>n</sub> &minus; &mu;)<sup>2</sup>] = &sigma;<sup>2</sup>/n &rarr; 0</em>, giving <em>L<sup>2</sup></em> convergence first and convergence in probability immediately via Chebyshev's inequality.</li>
+      <li><strong class="highlight">Strong Law of Large Numbers (SLLN):</strong> Strengthens the conclusion to <em>X&#772;<sub>n</sub> &rarr;<sup>a.s.</sup> &mu;</em> (Kolmogorov's SLLN requires only <em>E[|X<sub>1</sub>|] &lt; &infin;</em>). Rather than guaranteeing proximity at a single large <em>n</em>, it guarantees that almost every infinite sequence of observations settles permanently at <em>&mu;</em>.</li>
+      <li><strong class="highlight">Central Limit Theorem (CLT):</strong> Whereas the LLN collapses the distribution of <em>X&#772;<sub>n</sub></em> onto a single degenerate point <em>&mu;</em>, the CLT zooms in on the residual fluctuations by scaling them by <em>&radic;n</em>:
+      <div class="formula-box">Z<sub>n</sub> = &radic;n &middot; (X&#772;<sub>n</sub> &minus; &mu;) / &sigma; = (S<sub>n</sub> &minus; n&mu;) / (&sigma;&radic;n)  &rarr;<sup>d</sup>  N(0, 1)</div>
+      Here convergence can <em>only</em> be in distribution: <em>Z<sub>n</sub></em> keeps fluctuating as new terms arrive, so it never stabilizes pointwise or in probability, yet its probability law approaches the standard Gaussian bell curve.</li>
+    </ul>
+
+    <h3>1.4 Why &radic;n Appears Everywhere: Variance Additivity and Independence</h3>
+    <p>
+      The ubiquitous appearance of <strong class="highlight">&radic;n</strong> across probability and statistics is a direct geometric consequence of how variance behaves under summation. For any sequence <em>X<sub>1</sub>, &hellip;, X<sub>n</sub></em> with finite variances, the variance of the sum <em>S<sub>n</sub> = &sum;<sub>i=1</sub><sup>n</sup> X<sub>i</sub></em> is:
+    </p>
+
+    <div class="formula-box">Var(S<sub>n</sub>) = &sum;<sub>i=1</sub><sup>n</sup> Var(X<sub>i</sub>) + 2 &sum;<sub>1 &le; i &lt; j &le; n</sub> Cov(X<sub>i</sub>, X<sub>j</sub>)</div>
+
+    <ul>
+      <li><strong class="highlight">The Role of Independence (or Uncorrelatedness):</strong> When the variables are independent (or at least pairwise uncorrelated), every cross-covariance term <em>Cov(X<sub>i</sub>, X<sub>j</sub>)</em> equals zero. Variance therefore becomes strictly <strong class="highlight">additive</strong>: for identically distributed variables with variance <em>&sigma;<sup>2</sup></em>, <em>Var(S<sub>n</sub>) = n&sigma;<sup>2</sup></em>.</li>
+      <li><strong class="highlight">From Linear Variance to &radic;n Standard Deviation:</strong> Because standard deviation is the square root of variance (matching the original measurement units of <em>X<sub>i</sub></em>), the typical magnitude of random fluctuations around the mean grows as <em>SD(S<sub>n</sub>) = &radic;(n&sigma;<sup>2</sup>) = &radic;n &middot; &sigma;</em>. Random positive and negative deviations partially cancel each other out, so cumulative noise grows sub-linearly (<em>&radic;n</em>) while the deterministic signal (<em>n&mu;</em>) grows linearly (<em>n</em>).</li>
+      <li><strong class="highlight">What Breaks Without Independence:</strong> If observations are strongly positively correlated (in the extreme case, <em>X<sub>1</sub> = X<sub>2</sub> = &hellip; = X<sub>n</sub></em>), all <em>n(n&minus;1)</em> covariance terms survive, making <em>Var(S<sub>n</sub>) = n<sup>2</sup>&sigma;<sup>2</sup></em> and <em>SD(S<sub>n</sub>) = n&sigma;</em>. No cancellation occurs, and the sample mean fails to shrink its variance (<em>Var(X&#772;<sub>n</sub>) = &sigma;<sup>2</sup></em> regardless of <em>n</em>).</li>
+      <li><strong class="highlight">Impact on Statistical Inference:</strong> Dividing by <em>n</em> yields the variance of the sample mean: <em>Var(X&#772;<sub>n</sub>) = n&sigma;<sup>2</sup> / n<sup>2</sup> = &sigma;<sup>2</sup> / n</em>, so the <strong class="highlight">Standard Error</strong> is <em>SE(X&#772;<sub>n</sub>) = &sigma; / &radic;n</em>. Consequently:
+        <ul>
+          <li>Most classical estimators (MLEs, sample means) are <em>&radic;n</em>-consistent, meaning their estimation error decays at rate <em>O<sub>p</sub>(n<sup>&minus;1/2</sup>)</em>.</li>
+          <li>Confidence interval widths shrink proportionally to <em>1 / &radic;n</em>: to cut the margin of error in half, a statistician must collect <strong class="highlight">4 times</strong> as many independent observations.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <hr class="divider">
+
+    <!-- ======================================================
+         PART 2: CONDITIONAL PROBABILITY & BAYESIAN INFERENCE
+         ====================================================== -->
+    <h2>Part 2: Conditional Probability, Bayes' Theorem &amp; Statistical Inference</h2>
+
+    <h3>2.1 Conditional Probability: Probability Theory vs. Statistics</h3>
+    <p>
+      In axiomatic <strong class="highlight">probability theory</strong>, given two events <em>A</em> and <em>B</em> with <em>P(B) &gt; 0</em>, the conditional probability of <em>A</em> given <em>B</em> is defined as:
+    </p>
+    <div class="formula-box">P(A | B) = P(A &cap; B) / P(B)</div>
+    <p>
+      Geometrically, conditioning restricts the sample space <em>&Omega;</em> to the reduced universe <em>B</em> and renormalizes probabilities by dividing by <em>P(B)</em> so the total measure remains 1.
+    </p>
+    <p>
+      In <strong class="highlight">statistics</strong>, conditional probability bridges the forward generative model and inverse inference. A statistical model specifies the conditional distribution of observable data <em>D</em> given an unknown parameter <em>&theta;</em>, written <em>P(D | &theta;)</em>. Statistical inference solves the inverse problem: having observed <em>D</em>, what can we say about <em>&theta;</em>? Frequentist statistics treats <em>&theta;</em> as fixed and evaluates properties of procedures over repeated samples from <em>P(D | &theta;)</em>, whereas <strong class="highlight">Bayesian statistics</strong> treats <em>&theta;</em> itself as a random variable and uses Bayes' Theorem to compute the full conditional distribution <em>P(&theta; | D)</em>.
+    </p>
+
+    <h3>2.2 Bayes' Theorem and the Three Core Components</h3>
+    <p>
+      By symmetry of the intersection <em>P(&theta; &cap; D) = P(D | &theta;) P(&theta;) = P(&theta; | D) P(D)</em>, we immediately obtain <strong class="highlight">Bayes' Theorem</strong>:
+    </p>
+    <div class="formula-box">P(&theta; | D) = [ P(D | &theta;) &middot; P(&theta;) ] / P(D)   &prop;   L(&theta; | D) &middot; P(&theta;)</div>
+    <p>
+      where the denominator <em>P(D) = &int; P(D | &theta;) P(&theta;) d&theta;</em> (or <em>&sum;<sub>i</sub> P(D | &theta;<sub>i</sub>) P(&theta;<sub>i</sub>)</em> in the discrete case) is the <strong class="highlight">marginal likelihood (evidence)</strong>, a normalizing constant independent of <em>&theta;</em> ensuring the posterior integrates to 1.
+    </p>
+
+    <ul>
+      <li><strong class="highlight">Prior Probability <em>P(&theta;)</em>:</strong> Encodes our knowledge, structural constraints, or uncertainty about parameter <em>&theta;</em> <em>before</em> observing the current dataset <em>D</em> (e.g., historical base rates or weakly informative beliefs).</li>
+      <li><strong class="highlight">Likelihood Function <em>L(&theta; | D) = P(D | &theta;)</em>:</strong> Measures how plausible the observed data <em>D</em> is as a function of the unknown parameter <em>&theta;</em>. Crucially, while <em>P(D | &theta;)</em> is a probability distribution over <em>D</em> for fixed <em>&theta;</em>, the likelihood is viewed as a function of <em>&theta;</em> for fixed observed <em>D</em> and does not need to integrate to 1 over <em>&theta;</em>.</li>
+      <li><strong class="highlight">Posterior Probability <em>P(&theta; | D)</em>:</strong> The updated probability distribution over <em>&theta;</em> <em>after</em> incorporating the evidence from <em>D</em>. It represents an optimal compromise between prior beliefs and the information carried by the data.</li>
+    </ul>
+
+    <h3>2.3 Why Bayesian Updating Is Central to Statistical Inference</h3>
+    <p>
+      Bayes' Theorem turns inference into a coherent, recursive learning mechanism. Suppose independent data batches <em>D<sub>1</sub></em> and <em>D<sub>2</sub></em> arrive sequentially. Updating the prior <em>P(&theta;)</em> with <em>D<sub>1</sub></em> yields <em>P(&theta; | D<sub>1</sub>)</em>; using that posterior as the new prior for <em>D<sub>2</sub></em> yields <em>P(&theta; | D<sub>1</sub>, D<sub>2</sub>)</em>—mathematically identical to processing both batches together. This principle ("<strong class="highlight">today's posterior is tomorrow's prior</strong>") makes Bayesian inference naturally suited for streaming telemetry, online anomaly detection, adaptive clinical trials, and decision theory under uncertainty.
+    </p>
+
+    <h3>2.4 Concrete Examples &amp; Interactive Simulators</h3>
+
+    <!-- EXAMPLE 1: DISCRETE BAYES (IDS / BASE RATE FALLACY) -->
+    <div class="interactive-panel">
+      <h3 style="margin-top:0;">Example A (Discrete): Intrusion Detection System &amp; Base-Rate Fallacy</h3>
+      <p style="font-size:0.93em;">
+        Consider a network Intrusion Detection System (IDS) monitoring traffic packets. Let <em>H</em> be the event that a connection is a real attack (<em>P(H)</em> = prior base rate), and <em>E</em> be the event that the IDS raises an alert. Even a highly accurate detector can produce mostly false alarms when attacks are rare. Adjust the parameters below to see how the prior dominates the posterior:
+      </p>
+
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="ids-prior">Prior Attack Rate <em>P(H)</em>: <span id="ids-prior-val" class="highlight">1.0%</span></label>
+          <input type="range" id="ids-prior" min="0.1" max="30" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+          <label for="ids-tpr">Sensitivity / Likelihood <em>P(E | H)</em>: <span id="ids-tpr-val" class="highlight">99.0%</span></label>
+          <input type="range" id="ids-tpr" min="50" max="99.9" step="0.1" value="99.0">
+        </div>
+        <div class="control-group">
+          <label for="ids-fpr">False Positive Rate <em>P(E | &not;H)</em>: <span id="ids-fpr-val" class="highlight">5.0%</span></label>
+          <input type="range" id="ids-fpr" min="0.1" max="20" step="0.1" value="5.0">
+        </div>
+      </div>
+
+      <div class="results-box" id="ids-output">Calculating...</div>
+    </div>
+
+    <!-- EXAMPLE 2: CONTINUOUS CONJUGATE BAYES (BETA-BINOMIAL) -->
+    <div class="interactive-panel">
+      <h3 style="margin-top:0;">Example B (Continuous): Beta-Binomial Updating of a System Breach Probability</h3>
+      <p style="font-size:0.93em;">
+        Suppose we want to estimate an unknown penetration probability <em>&theta; &isin; [0, 1]</em> of a hardened server. We place a conjugate <strong class="highlight">Beta(&alpha;, &beta;)</strong> prior on <em>&theta;</em>, where <em>&alpha;</em> and <em>&beta;</em> act as prior "pseudo-counts" of breaches and blocks. After observing <em>k</em> breaches in <em>n</em> independent attempts (Binomial likelihood <em>&theta;<sup>k</sup>(1 &minus; &theta;)<sup>n&minus;k</sup></em>), Bayes' Theorem yields an exact closed-form posterior: <strong class="highlight">Beta(&alpha; + k, &beta; + n &minus; k)</strong>.
+      </p>
+
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="beta-alpha">Prior &alpha; (pseudo-breaches): <span id="beta-alpha-val" class="highlight">2</span></label>
+          <input type="range" id="beta-alpha" min="1" max="30" step="1" value="2">
+        </div>
+        <div class="control-group">
+          <label for="beta-beta">Prior &beta; (pseudo-blocks): <span id="beta-beta-val" class="highlight">8</span></label>
+          <input type="range" id="beta-beta" min="1" max="30" step="1" value="8">
+        </div>
+        <div class="control-group">
+          <label for="bin-n">Observed Trials (<em>n</em>): <span id="bin-n-val" class="highlight">20</span></label>
+          <input type="range" id="bin-n" min="1" max="150" step="1" value="20">
+        </div>
+        <div class="control-group">
+          <label for="bin-k">Observed Breaches (<em>k</em>): <span id="bin-k-val" class="highlight">11</span></label>
+          <input type="range" id="bin-k" min="0" max="20" step="1" value="11">
+        </div>
+      </div>
+
+      <div class="results-box" id="beta-output">Calculating...</div>
+
+      <div class="canvas-wrapper">
+        <canvas id="bayes-canvas" width="760" height="320"></canvas>
+        <div class="legend">
+          <div class="legend-item"><span class="swatch" style="background:#00bcd4;"></span> Prior Beta(&alpha;, &beta;)</div>
+          <div class="legend-item"><span class="swatch" style="background:#aaaaaa; border-top: 2px dashed #aaaaaa; height:0;"></span> Likelihood (scaled)</div>
+          <div class="legend-item"><span class="swatch" style="background:#ff9800;"></span> Posterior Beta(&alpha;+k, &beta;+n&minus;k)</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>2.5 Applications, Advantages, Limitations &amp; Influence on Conclusions</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>Analysis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong class="highlight">Key Applications</strong></td>
+          <td>Spam and malware filtering (Naive Bayes), medical and IDS diagnostics, A/B testing with early stopping, hierarchical models for sparse data, Kalman/particle filters in robotics, and probabilistic machine learning.</td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">Advantages</strong></td>
+          <td>
+            &bull; Produces a full probability distribution over <em>&theta;</em>, yielding intuitive <strong class="highlight">credible intervals</strong> (e.g., "a 95% probability that <em>&theta;</em> lies in [a, b]").<br>
+            &bull; Naturally incorporates domain knowledge and acts as automatic regularization when data is scarce.<br>
+            &bull; Handles sequential data updates seamlessly without invalidating inference.
+          </td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">Limitations</strong></td>
+          <td>
+            &bull; <strong class="highlight">Prior sensitivity:</strong> When sample size <em>n</em> is small, poorly chosen or overly dogmatic priors can strongly bias conclusions.<br>
+            &bull; <strong class="highlight">Computational cost:</strong> Outside conjugate families (like Beta-Binomial), the evidence integral <em>P(D) = &int; P(D|&theta;)P(&theta;)d&theta;</em> is intractable in high dimensions, requiring numerical approximations such as Markov Chain Monte Carlo (MCMC) or Variational Inference.
+          </td>
+        </tr>
+        <tr>
+          <td><strong class="highlight">Influence on Statistical Conclusions</strong></td>
+          <td>
+            The posterior mean in the Beta-Binomial model is a weighted average of the prior mean and the Maximum Likelihood Estimate (<em>k/n</em>):<br>
+            <em>E[&theta; | D] = (&alpha; + k) / (&alpha; + &beta; + n) = w &middot; (&alpha; / (&alpha; + &beta;)) + (1 &minus; w) &middot; (k / n)</em>.<br>
+            With small <em>n</em>, the prior weight <em>w = (&alpha; + &beta;) / (&alpha; + &beta; + n)</em> pulls extreme sample estimates toward prior expectations (shrinkage). As <em>n &rarr; &infin;</em>, <em>w &rarr; 0</em>: the likelihood overwhelms any non-zero prior, and by the <strong class="highlight">Bernstein&ndash;von Mises Theorem</strong>, the posterior concentrates around the true parameter and becomes asymptotically Gaussian—reconciling Bayesian and frequentist conclusions in the large-sample limit.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <a href="index.html" class="back-link">&larr; Back to Homework list</a>
+  </div>
+
+  <!-- ======================================================
+       INTERACTIVE JAVASCRIPT (DISCRETE BAYES + BETA-BINOMIAL)
+       ====================================================== -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      /* --- PART A: DISCRETE IDS BAYES CALCULATOR --- */
+      const idsPrior = document.getElementById("ids-prior");
+      const idsTpr = document.getElementById("ids-tpr");
+      const idsFpr = document.getElementById("ids-fpr");
+      const idsPriorVal = document.getElementById("ids-prior-val");
+      const idsTprVal = document.getElementById("ids-tpr-val");
+      const idsFprVal = document.getElementById("ids-fpr-val");
+      const idsOutput = document.getElementById("ids-output");
+
+      function updateIDS() {
+        const pH = parseFloat(idsPrior.value) / 100;
+        const pE_H = parseFloat(idsTpr.value) / 100;
+        const pE_notH = parseFloat(idsFpr.value) / 100;
+
+        idsPriorVal.textContent = (pH * 100).toFixed(1) + "%";
+        idsTprVal.textContent = (pE_H * 100).toFixed(1) + "%";
+        idsFprVal.textContent = (pE_notH * 100).toFixed(1) + "%";
+
+        const pNotH = 1 - pH;
+        const pE = pE_H * pH + pE_notH * pNotH; // Marginal likelihood / total alert probability
+        const pH_E = (pE_H * pH) / pE;          // Posterior P(Attack | Alert)
+
+        // Second independent alert update (sequential Bayesian updating)
+        const pE2 = pE_H * pH_E + pE_notH * (1 - pH_E);
+        const pH_E2 = (pE_H * pH_E) / pE2;
+
+        idsOutput.innerHTML =
+          `Evidence P(Alert)                  : ${(pE * 100).toFixed(3)}%\n` +
+          `Posterior after 1 Alert  P(H | E)  : <span class="highlight">${(pH_E * 100).toFixed(2)}%</span>\n` +
+          `Sequential Update (2nd Alert)      : <span class="highlight">${(pH_E2 * 100).toFixed(2)}%</span>\n\n` +
+          `Takeaway: Even with ${(pE_H * 100).toFixed(1)}% sensitivity, a low prior base rate of ${(pH * 100).toFixed(1)}% means ` +
+          `an isolated alert has only a ${(pH_E * 100).toFixed(1)}% chance of being a true attack. ` +
+          `Sequential updating with a second independent detector raises confidence to ${(pH_E2 * 100).toFixed(1)}%.`;
+      }
+
+      [idsPrior, idsTpr, idsFpr].forEach(el => el.addEventListener("input", updateIDS));
+      updateIDS();
+
+      /* --- PART B: BETA-BINOMIAL CONJUGATE UPDATER --- */
+      const alphaSlider = document.getElementById("beta-alpha");
+      const betaSlider = document.getElementById("beta-beta");
+      const nSlider = document.getElementById("bin-n");
+      const kSlider = document.getElementById("bin-k");
+
+      const alphaVal = document.getElementById("beta-alpha-val");
+      const betaVal = document.getElementById("beta-beta-val");
+      const nVal = document.getElementById("bin-n-val");
+      const kVal = document.getElementById("bin-k-val");
+      const betaOutput = document.getElementById("beta-output");
+      const canvas = document.getElementById("bayes-canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Lanczos approximation for ln(Gamma(z)) to avoid factorial overflow
+      function logGamma(z) {
+        const g = 7;
+        const p = [
+          0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+          771.32342877765313, -176.61502916214059, 12.507343278686905,
+          -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7
+        ];
+        if (z < 0.5) {
+          return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
+        }
+        z -= 1;
+        let x = p[0];
+        for (let i = 1; i < g + 2; i++) {
+          x += p[i] / (z + i);
+        }
+        const t = z + g + 0.5;
+        return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+      }
+
+      function betaPDF(x, a, b) {
+        if (x <= 0 || x >= 1) return 0;
+        const logNorm = logGamma(a + b) - logGamma(a) - logGamma(b);
+        return Math.exp(logNorm + (a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x));
+      }
+
+      function updateBetaBinomial() {
+        const a = parseInt(alphaSlider.value, 10);
+        const b = parseInt(betaSlider.value, 10);
+        const n = parseInt(nSlider.value, 10);
+
+        // Keep k <= n
+        kSlider.max = n;
+        if (parseInt(kSlider.value, 10) > n) {
+          kSlider.value = n;
+        }
+        const k = parseInt(kSlider.value, 10);
+
+        alphaVal.textContent = a;
+        betaVal.textContent = b;
+        nVal.textContent = n;
+        kVal.textContent = k;
+
+        const postA = a + k;
+        const postB = b + (n - k);
+
+        const priorMean = a / (a + b);
+        const mle = k / n;
+        const postMean = postA / (postA + postB);
+        const postVar = (postA * postB) / (Math.pow(postA + postB, 2) * (postA + postB + 1));
+        const priorWeight = (a + b) / (a + b + n);
+
+        betaOutput.innerHTML =
+          `Prior Mean     [α / (α+β)]          : ${priorMean.toFixed(4)}  (Prior weight: ${(priorWeight * 100).toFixed(1)}%)\n` +
+          `Likelihood MLE [k / n]              : ${mle.toFixed(4)}  (Data weight : ${((1 - priorWeight) * 100).toFixed(1)}%)\n` +
+          `Posterior Mean [(α+k) / (α+β+n)]    : <span class="highlight">${postMean.toFixed(4)}</span>  (Posterior SD: ${Math.sqrt(postVar).toFixed(4)})`;
+
+        drawBetaPlot(a, b, k, n, postA, postB);
+      }
+
+      function drawBetaPlot(a, b, k, n, postA, postB) {
+        const w = canvas.width;
+        const h = canvas.height;
+        const padL = 45, padR = 20, padT = 20, padB = 35;
+        const plotW = w - padL - padR;
+        const plotH = h - padT - padB;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const steps = 250;
+        const xs = [];
+        const priorY = [];
+        const postY = [];
+        const likeY = [];
+
+        // Normalize likelihood to Beta(k+1, n-k+1) density for clean visual comparison on same axis
+        let maxY = 0;
+        for (let i = 1; i < steps; i++) {
+          const x = i / steps;
+          const yPr = betaPDF(x, a, b);
+          const yPo = betaPDF(x, postA, postB);
+          const yLk = betaPDF(x, k + 1, n - k + 1);
+          xs.push(x);
+          priorY.push(yPr);
+          postY.push(yPo);
+          likeY.push(yLk);
+          if (yPr > maxY) maxY = yPr;
+          if (yPo > maxY) maxY = yPo;
+          if (yLk > maxY) maxY = yLk;
+        }
+        maxY = Math.max(maxY * 1.12, 1.5);
+
+        const mapX = (x) => padL + x * plotW;
+        const mapY = (y) => padT + plotH - (y / maxY) * plotH;
+
+        // Grid & Axes
+        ctx.strokeStyle = "#2b2b2b";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#888";
+        ctx.font = "11px monospace";
+
+        for (let i = 0; i <= 5; i++) {
+          const yVal = (i / 5) * maxY;
+          const py = mapY(yVal);
+          ctx.beginPath();
+          ctx.moveTo(padL, py);
+          ctx.lineTo(w - padR, py);
+          ctx.stroke();
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          ctx.fillText(yVal.toFixed(1), padL - 6, py);
+        }
+
+        for (let i = 0; i <= 10; i++) {
+          const xVal = i / 10;
+          const px = mapX(xVal);
+          ctx.beginPath();
+          ctx.moveTo(px, padT);
+          ctx.lineTo(px, h - padB);
+          ctx.stroke();
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(xVal.toFixed(1), px, h - padB + 8);
+        }
+
+        // Helper to plot curve
+        function plotCurve(ys, color, lineWidth, dashed, fillAlpha) {
+          ctx.save();
+          ctx.beginPath();
+          if (dashed) ctx.setLineDash([6, 4]);
+          for (let i = 0; i < xs.length; i++) {
+            const px = mapX(xs[i]);
+            const py = mapY(ys[i]);
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.strokeStyle = color;
+          ctx.lineWidth = lineWidth;
+          ctx.stroke();
+
+          if (fillAlpha) {
+            ctx.lineTo(mapX(xs[xs.length - 1]), mapY(0));
+            ctx.lineTo(mapX(xs[0]), mapY(0));
+            ctx.closePath();
+            ctx.fillStyle = fillAlpha;
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        // Draw Prior, Likelihood (scaled), and Posterior
+        plotCurve(priorY, "#00bcd4", 2, false, "rgba(0, 188, 212, 0.12)");
+        plotCurve(likeY, "#aaaaaa", 1.8, true, null);
+        plotCurve(postY, "#ff9800", 2.8, false, "rgba(255, 152, 0, 0.22)");
+
+        // X-axis title
+        ctx.fillStyle = "#bbb";
+        ctx.textAlign = "center";
+        ctx.fillText("Parameter θ (Breach Probability)", padL + plotW / 2, h - 10);
+      }
+
+      [alphaSlider, betaSlider, nSlider, kSlider].forEach(el => el.addEventListener("input", updateBetaBinomial));
+      updateBetaBinomial();
+    });
+  </script>
+</body>
+</html>
